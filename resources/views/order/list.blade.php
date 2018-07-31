@@ -5,7 +5,7 @@
         <div class="col-md-20">
             <div class="card">
                 <div class="card-header"><h1 align="center">Orders</h1></div>
-                <a href="orders/create" class="btn btn-primary" align="center">Add Order</a>
+                <a href="oorders/create" class="btn btn-primary" align="center">Add Order</a>
 
                 @if (Session::has('flash_message'))
                 	<div class="alert alert-success"> {{Session::get('flash_message')}} </div>

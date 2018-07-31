@@ -13,6 +13,8 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-require('./components/Example');
-require('./components/Forms');
-require('./components/React');
+//require('./components/Example');
+//require('./components/Forms');
+//require('./components/React');
+require('./components/App');
+//require('./components/Pages');

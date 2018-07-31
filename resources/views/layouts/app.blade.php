@@ -69,14 +69,17 @@
             </div>
         </nav>
         <main class="py-4">
+
+
             @yield('content')
+            <div id="test"></div>
 
         </main>
 
 
     </div>
     <div>
-
+        
         
     </div>
 <script type="text/javascript" src="/js/app.js"></script>

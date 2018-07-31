@@ -13,7 +13,7 @@ class ProductController extends Controller
         public function index() {
 
         $products = Product::all();
-        return view('product.list', compact('products'));
+        return $products->toJson();
     }
 
     
@@ -26,16 +26,14 @@ class ProductController extends Controller
         public function save() {
 
         $this->validate(request(), [
-            'sku' => 'required',
-            'title' => 'required'
+            'sku' => 'required|unique:products,sku'
         ]);
 
         Product::create(request()->all());
 
 
-        \Session::flash('flash_message', 'Product has been created succesfully!');
   
-        return redirect('/products');
+         return response()->json('Saved!');
     }
 
 
@@ -45,7 +43,7 @@ class ProductController extends Controller
         $product = Product::FindOrFail($id);
 
 
-         return view('product.edit', compact('product'));
+         return $product->toJson();
     }
 
     
@@ -54,23 +52,20 @@ class ProductController extends Controller
         $products = Product::FindOrFail($id);
 
         $this->validate(request(), [
-            'sku' => 'required',
-            'title' => 'required'
+            'sku' => 'required|unique:products,sku,'.$id
         ]);
-    \Session::flash('flash_message edit', 'Product has been edited succesfully!');
 
         $products->update($request->all());
 
-        return redirect('/products');
+        return response()->json('Updated!');
     }
 
 
     public function delete($id) {
-            $product = Product::FindOrFail($id);
+            $product = Product::find($id);
             $product->delete();
 
-            \Session::flash('flash_message delete', 'Product has been deleted succesfully!');
 
-        return back();
+        return response()->json('Supplier deleted');
     }
 }

@@ -18,7 +18,8 @@ class OrderController extends Controller
         $orders = Order::all();
         $supplier = Supplier::all();
         $Supplier = Supplier::find($supplier);
-        return view('order.list', compact('orders', 'supplier'));
+
+        return $orders->toJson();
     }
 
    
@@ -27,8 +28,6 @@ class OrderController extends Controller
 
         $supplier = Supplier::all();
 
-        //dd($supplier);
-
         return view('order.create', compact('supplier'));
     }
 
@@ -36,25 +35,25 @@ class OrderController extends Controller
    public function save() {
 
         $this->validate(request(), [
-            'order_no' => 'required'
-            
+
+            'order_no' => 'required',
+            'order_no' => 'required|unique:orders,order_no'
         ]);
 
         Order::create(request()->all());
 
-        \Session::flash('flash_message', 'Order has been created succesfully!');
   
-        return redirect('/orders');
+        return response()->json('Saved!');
     }
 
     
    public function edit($id, Supplier $supplier) {
 
         $order = Order::FindOrFail($id);
-         $supplier = Supplier::all();
+        $supplier = Supplier::all();
 
 
-         return view('order.edit', compact('order', 'supplier'));
+        return $order->toJson();
     }
 
     
@@ -63,7 +62,7 @@ class OrderController extends Controller
         $orders = Order::FindOrFail($id);
 
          $this->validate(request(), [
-            'order_no' => 'required'
+            'order_no' => 'required|unique:orders,order_no,'.$id
             
         ]);
 
@@ -71,19 +70,18 @@ class OrderController extends Controller
 
         $orders->update($request->all());
 
-        return redirect('/orders');
+       return response()->json('Updated!');
     }
 
 
-
-   
     public function delete($id) {
-            $order = Order::FindOrFail($id);
+
+            $order = Order::find($id);
             $order->delete();
 
-            \Session::flash('flash_message delete', 'Order has been deleted succesfully!');
+           
 
-        return back();
+        return response()->json('Order deleted');
     }
 
     public function API(Supplier $supplier)

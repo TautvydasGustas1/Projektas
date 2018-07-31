@@ -16,7 +16,7 @@ class CustomerController extends Controller
    	public function index() {
 
    		$customers = Customer::all();
-   		return view('customer.list', compact('customers'));
+   		return $customers->toJson();
    	}
 
    	public function create() {
@@ -30,7 +30,7 @@ class CustomerController extends Controller
 
 
 
-   		return redirect('/customers');
+   		 return response()->json('Saved!');
    	}
 
    	public function edit($id) {
@@ -38,7 +38,7 @@ class CustomerController extends Controller
    		$customer = Customer::FindOrFail($id);
 
 
-   		 return view('customer.edit', compact('customer'));
+   		 return $customer->toJson();
    	}
 
    		public function update($id, Request $request) {
@@ -50,16 +50,15 @@ class CustomerController extends Controller
    		$customers->update($request->all());
 
 
-		return redirect('/customers');
+		return response()->json('Updated!');
    	}
 
    	public function delete($id) {
-   			$customer = Customer::FindOrFail($id);
-   			$customer->delete();
+   			$customer = Customer::find($id);
+            $customer->delete();
 
-   			\Session::flash('flash_message delete', 'Customer has been deleted succesfully!');
 
-   		return back();
+   		return response()->json('Customer deleted');
    	}
 
 }

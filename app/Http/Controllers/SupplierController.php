@@ -15,7 +15,7 @@ class SupplierController extends Controller
    	public function index() {
 
    		$suppliers = Supplier::all();
-   		return view('supplier.list', compact('suppliers'));
+   		return $suppliers->toJson();
    	}
 
    	public function create() {
@@ -26,16 +26,14 @@ class SupplierController extends Controller
    	public function save() {
 
    		$this->validate(request(), [
-   			'code' => 'required',
+   			'code' => 'required|unique:suppliers,code',
    			'title' => 'required',
-   			'email' => 'required'
+   			'email' => 'required|unique:suppliers,email'
    		]);
 
    		Supplier::create(request()->all());
-
-   		\Session::flash('flash_message', 'Supplier has been created succesfully!');
   
-   		return redirect('/suppliers');
+   		 return response()->json('Saved!');
    	}
 
    	public function edit($id) {
@@ -43,7 +41,7 @@ class SupplierController extends Controller
    		$supplier = Supplier::FindOrFail($id);
 
 
-   		 return view('supplier.edit', compact('supplier'));
+   		 return $supplier->toJson();
    	}
 
    	public function update($id, Request $request) {
@@ -51,25 +49,26 @@ class SupplierController extends Controller
    		$suppliers = Supplier::FindOrFail($id);
 
    		$this->validate(request(), [
-   			'code' => 'required',
-   			'title' => 'required',
-   			'email' => 'required'
+   			'code' => 'required|unique:suppliers,code,'.$id,
+            'title' => 'required',
+            'email' => 'required|unique:suppliers,email,'.$id
    		]);
 
    		\Session::flash('flash_message edit', 'Supplier has been edited succesfully!');
 
    		$suppliers->update($request->all());
 
-		return redirect('/suppliers');
+		return response()->json('Updated!');
    	}
 
    		public function delete($id) {
-   			$supplier = Supplier::FindOrFail($id);
-   			$supplier->delete();
+   			$supplier = Supplier::find($id);
+            $supplier->delete();
 
-   			\Session::flash('flash_message delete', 'Supplier has been deleted succesfully!');
+           
 
-   		return back();
+        return response()->json('Supplier deleted');
+    
    	}
 
 

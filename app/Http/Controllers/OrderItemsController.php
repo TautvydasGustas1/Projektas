@@ -18,7 +18,9 @@ class OrderItemsController extends Controller
     public function index(Order $order) {
 
         $order_items = $order->orderItems;
-        return view('order_items.list', compact('order_items', 'order'));
+
+        return $order_items->toJson();
+
     }
     
     public function create(Customer $customers, Product $skus, Order $order) {
@@ -35,7 +37,6 @@ class OrderItemsController extends Controller
         
         $order_items = Order_Items::create(request()->all());
         \Session::flash('flash_message', 'Order item has been created succesfully!');
-        //dd($order_items);
         return redirect("/order/$order->id/items");
     }
 
@@ -71,6 +72,12 @@ class OrderItemsController extends Controller
             \Session::flash('flash_message delete', 'Order item has been deleted succesfully!');
 
         return back();
+    }
+
+    public function API(Product $product)
+    {
+        $product = Product::where('sku', 'like', '%'.request()->sku.'%')->limit(10)->get();
+        return response()->json($product);
     }
 
 }
