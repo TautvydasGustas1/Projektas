@@ -10,7 +10,8 @@ constructor () {
     super()
 
     this.state = {
-      orderItems: []
+      orderItems: [],
+      orderName: ''
     }
  
   }
@@ -21,22 +22,25 @@ constructor () {
 
     axios.get(`/order/${orderItemId}/items`).then(response => {
       this.setState({
-        orderItems: response.data
+        orderItems: response.data.items,
+        orderName: response.data.order.order_no
       })
-
+      //console.log(response.data);
+      
     })
   }
 
-	deleteUser(product) {
+	deleteUser(order) {
+	const orderItemId = this.props.match.params.id
 
 		//BackEnd delete
 		var $this = this
-		axios.delete(`/products/${product.id}/delete`).then(response => {
+		axios.delete(`/order/${orderItemId}/items/${order.id}/delete`).then(response => {
 		//FroontEnd delete
-		const newState = $this.state.products.slice();
-		newState.splice(newState.indexOf(product), 1)
+		const newState = $this.state.orderItems.slice();
+		newState.splice(newState.indexOf(order), 1)
 		$this.setState({
-			products: newState
+			orderItems: newState
 		})
 
 		}).catch(error => {
@@ -48,6 +52,10 @@ constructor () {
 
 render() {
 	const { orderItems } = this.state
+	const { orderName } = this.state
+	const orderItemId = this.props.match.params.id
+    
+
 
 
 	return(
@@ -55,10 +63,9 @@ render() {
     <div className="row justify-content-center">
         <div className="col-md-20">
             <div className="card">
-                <div className="card-header"><h1 align="center">Order for {this.state.orderItems}</h1></div>
+                <div className="card-header"><h1 align="center">Orders for {orderName}</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Order Item</Link>
-                
-
+               
                 <div className="card-body">
                  	
 					<table className="table"> 
@@ -67,6 +74,7 @@ render() {
 							<th>Order ID</th>
 							<th>Sku</th>
 							<th>Product Title</th>
+							<th>Customer ID</th>
 							<th>Customer Title</th>
 							<th>Contact Info</th>
 							<th>Price</th>
@@ -80,23 +88,24 @@ render() {
 							
 						</thead>
 			<tbody>
-							
+				
 							{orderItems.map(orderItem =>(
-								<tr key={OrderItem.id}> 
-								<td>{OrderItem.sku}</td>
-								<td>{OrderItem.product_title}</td>
-								<td>{OrderItem.customer_id}</td>
-								<td>{OrderItem.customer_title}</td>
-								<td>{OrderItem.contact_info}</td>
-								<td>{OrderItem.price}</td>
-								<td>{OrderItem.qty}</td>
-								<td>{OrderItem.deadline}</td>
-								<td>{OrderItem.leadtime}</td>
-								<td>{OrderItem.item_status}</td>
-								<td>{OrderItem.notified}</td>
-								<td>{OrderItem.customer_status}</td>
-								<td><Link to={`/oordersItems/${OrderItem.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
-								<td><div className='btn btn-danger btn-sm' onClick={this.deleteUser.bind(this, product)}>Delete</div></td>
+								<tr key={orderItem.id}> 
+								<td>{orderItem.order_id}</td>
+								<td>{orderItem.sku}</td>
+								<td>{orderItem.product_title}</td>
+								<td>{orderItem.customer_id}</td>
+								<td>{orderItem.customer_title}</td>
+								<td>{orderItem.contact_info}</td>
+								<td>{orderItem.price}</td>
+								<td>{orderItem.qty}</td>
+								<td>{orderItem.deadline}</td>
+								<td>{orderItem.leadtime}</td>
+								<td>{orderItem.item_status}</td>
+								<td>{orderItem.notified}</td>
+								<td>{orderItem.customer_status}</td>
+								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
+								<td><div className='btn btn-danger btn-sm' onClick={this.deleteUser.bind(this, orderItem)}>Delete</div></td>
 								</tr>
 								))}
 									

@@ -43,6 +43,7 @@ constructor () {
 
 render() {
 	const { customers } = this.state
+	console.log(customers)
 
 
 	return(
@@ -50,7 +51,7 @@ render() {
     <div className="row justify-content-center">
         <div className="col-md-20">
             <div className="card">
-                <div className="card-header"><h1 align="center">Products</h1></div>
+                <div className="card-header"><h1 align="center">Customers</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Product</Link>
                 
 

@@ -17,32 +17,39 @@ import Customers from "./Customers/Customers.js"
 import CustomersEdit from "./Customers/CustomersEdit.js"
 import OrderItemsList from "./Order Items/OrderItemsList.js"
 import OrderItemsCreate from "./Order Items/OrderItemsCreate.js"
+import OrderItemsEdit from "./Order Items/OrderItemsEdit.js"
+import Header from "./Header/Header.js"
 
 
 class App extends Component {
+
+
+
+	
 
 	render() {
 
 		return(
 
 			<BrowserRouter> 
-				
 				<div>
+					<Header/>
 					<Switch>
-						<Route exact path='/oorders/List' component={OrdersList} />			
+						<Route  exact path='/oorder/:id/items/:id2' component={OrderItemsEdit} />
+						<Route  path='/oorder/:id/items' component={OrderItemsList} />
+						<Route  exact path='/oorder/:id/create' component={OrderItemsCreate} />
+						<Route  path='/oorders/List' component={OrdersList} />			
 						<Route  path='/ssuppliers/list' component={SuppliersList} />
 						<Route  path='/ssuppliers/create' component={Suppliers} />
 						<Route  path='/pproducts/list' component={ProductsList} />
 						<Route  path='/pproducts/create' component={ProductsCreate} />
 						<Route  path='/pproducts/:id' component={ProductsEdit} />
 						<Route  path='/ssuppliers/:id' component={SuppliersEdit} />
-						<Route  path='/oorders/create' component={Orders} />	
-						<Route  path='/oorders/:id' component={OrdersEdit} />
+						<Route exact path='/oorders/create' component={Orders} />	
+						<Route exact path='/oorders/:id' component={OrdersEdit} />
 						<Route  path='/ccustomers/list' component={CustomersList} />
 						<Route  path='/ccustomers/create' component={Customers} />
 						<Route  path='/ccustomers/:id' component={CustomersEdit} />
-						<Route  path='/oorder/:id/items' component={OrderItemsList} />
-						<Route  path='/oorder/:id/create' component={OrderItemsCreate} />
 
 					</Switch>
 				</div>

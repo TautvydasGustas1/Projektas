@@ -72,17 +72,23 @@ Route::get('/orders/api', 'OrderController@API');
 //Order Items
 //---------------------------------
 Route::get('/order/{order}/items/{id}/edit', 'OrderItemsController@edit')->name('/order/{order}/items/{id}/edit');
-Route::get('/order/{order}/items/{id}/delete', 'OrderItemsController@delete')->name('/order/{order}/items/{id}/delete');
-Route::patch('/order/{order}/items/{id}', 'OrderItemsController@update')->name('/order/{order}/items/{id}/edit');
+Route::delete('/order/{order}/items/{id}/delete', 'OrderItemsController@delete')->name('/order/{order}/items/{id}/delete');
+Route::post('/order/{order}/items/{id}', 'OrderItemsController@update')->name('/order/{order}/items/{id}/edit');
 
 Route::get('/order/{order}/items', 'OrderItemsController@index')->name('order_items');
 Route::post('/order/{order}/items', 'OrderItemsController@save')->name('order_items');
 Route::get('/order/{order}/items/create', 'OrderItemsController@create')->name('order/{order}/items');
 Route::get('/orders/{order}/api', 'OrderItemsController@API');
+Route::get('/orders/{order}/CustomerApi', 'OrderItemsController@CustomerAPI');
+Route::get('headerRequest', 'OrderItemsController@headerRequest');
 //---------------------------------
+
+
+
+
 
 Route::view('/oorders/{path?}', 'layouts/app');
 Route::view('/ssuppliers/{path?}', 'layouts/app');
 Route::view('/pproducts/{path?}', 'layouts/app');
 Route::view('/ccustomers/{path?}', 'layouts/app');
-Route::view('/oorder/{order}/{path?}', 'layouts/app');
+Route::view('/oorder/{order}/items/{path?}', 'layouts/app');

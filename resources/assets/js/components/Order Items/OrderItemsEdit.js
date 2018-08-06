@@ -4,14 +4,16 @@ import axios from 'axios'
 import Autocomplete from 'react-autocomplete';
 
 
-class OrderItemsCreate extends Component {
+class OrderItemsEdit extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
 			order_id: '',
+			name: '',
 			sku: '',
 			product_title: '',
+			customer_id: '',
 			customer_title: '',
 			contact_info: '',
 			price: '',
@@ -22,6 +24,7 @@ class OrderItemsCreate extends Component {
 			notified: '',
 			customer_status: '',
 			autocompleteData: [],
+			autocompleteData1: [],
 			errors: []
 		}
 
@@ -35,6 +38,13 @@ class OrderItemsCreate extends Component {
         this.getItemValue = this.getItemValue.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
+
+        this.retrieveDataAsynchronouslyCust = this.retrieveDataAsynchronouslyCust.bind(this);
+        this.onChangeCust = this.onChangeCust.bind(this);
+        this.onSelectCust = this.onSelectCust.bind(this);
+        this.getItemValueCust = this.getItemValueCust.bind(this);
+        this.renderItemCust = this.renderItemCust.bind(this);
+        
 		
 }
 
@@ -54,31 +64,27 @@ retrieveDataAsynchronously(searchText){
        console.log(errors);
      })
     }
-    
+
 
     onChange(e){
         this.setState({
-            sku: e.target.value
-           
+            sku: e.target.value        
         });
             
 
-        this.retrieveDataAsynchronously(e.target.value)
+        this.retrieveDataAsynchronously(e.target.value)   
     }
-
-  
     onSelect(val){
 
         this.setState({
             sku: val
         });
-
     }
 
    
     renderItem(item, isHighlighted){
         return (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+            <div style={{background: isHighlighted ? 'lightgray' : 'white' }}>
                 {item.sku}
             </div>   
         ); 
@@ -91,10 +97,91 @@ retrieveDataAsynchronously(searchText){
     }
 
 
+    // Autocomplete for customer ID
+
+retrieveDataAsynchronouslyCust(searchText){
+       const orderItemId = this.props.match.params.id
+
+        axios.get(`/orders/${orderItemId}/CustomerApi?last_name=`+searchText).then(response => {
+ 
+         this.setState({
+
+           autocompleteData1: response.data
+         });
+        
+
+     }).catch(errors => {
+
+       console.log(errors);
+     })
+    }
+
+
+    onChangeCust(e){
+        this.setState({
+            customer_id: e.target.value
+           
+        });
+            
+
+        this.retrieveDataAsynchronouslyCust(e.target.value)   
+    }
+
+  
+    onSelectCust(val){
+
+        this.setState({
+            customer_id: val
+        });
+
+    }
+
+   
+    renderItemCust(item, isHighlighted){
+        return (
+            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                {item.last_name}
+            </div>   
+        ); 
+    }
+
+    
+    getItemValueCust(item){
+        
+        return `${item.id}`;
+    }
 
    			 //Autocomplete
 //----------------------------------------------
 				//Form
+
+
+//Pasiema data is servo
+//---------- 
+componentDidMount () {
+    const orderId = this.props.match.params.id
+    const orderItemsId = this.props.match.params.id2
+
+    axios.get(`/order/${orderId}/items/${orderItemsId}/edit`).then(response => {
+      this.setState({
+       name: response.data.order_no,
+       order_id: response.data.order_id,
+       sku: response.data.sku,
+       customer_id: response.data.customer_id,
+       customer_title: response.data.customer_title,
+       contact_info: response.data.contact_info,
+       product_title: response.data.product_title,
+       price: response.data.price,
+       qty: response.data.qty,
+       deadline: response.data.deadline,
+       leadtime: response.data.leadtime,
+       item_status: response.data.item_status,
+       notified: response.data.notified,
+       customer_status: response.data.customer_status
+      })
+    })
+  }
+//--------------
 
 	hasErrorFor (field) {
     return !!this.state.errors[field]
@@ -121,14 +208,16 @@ retrieveDataAsynchronously(searchText){
 		event.preventDefault()
 		const { history } = this.props
 		const orderItemId = this.props.match.params.id
-
+		const orderItemsId = this.props.match.params.id2
 		
 
 		const orderItems = {
 			order_id: this.state.order_id,
 			sku: this.state.sku,
 			product_title: this.state.product_title,
+			customer_id: this.state.customer_id,
 			customer_title: this.state.customer_title,
+			product_title: this.state.product_title,
 			contact_info: this.state.contact_info,
 			price: this.state.price,
 			qty: this.state.qty,
@@ -139,9 +228,9 @@ retrieveDataAsynchronously(searchText){
 			customer_status: this.state.customer_status
 		}
 
-		axios.post(`/orders/${orderItemId}/items/`, orderItems).then(response => {
+		axios.post(`/order/${orderItemId}/items/${orderItemsId}`, orderItems).then(response => {
 			//redirecting
-			history.push(`/oorders/${orderItemId}/list`)
+			history.push(`/oorder/${orderItemId}/items`)
 
 		}).catch(error => {
 			this.setState({
@@ -159,7 +248,7 @@ render() {
    			 <div className="row justify-content-center">
         		<div className="col-md-8">
            			 <div className="card">
-		                <div className="card-header" align="center"><h1>Create Order Item</h1></div>
+		                <div className="card-header" align="center"><h1>Edit Order Item for {this.state.name}</h1></div>
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
@@ -167,7 +256,7 @@ render() {
 		                <div className="row">
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
-				             <label>Order ID</label>
+				             <label>Order Number</label>
 				            <input id="order_id" type="order_id" name="order_id" className={`form-control ${this.hasErrorFor('order_id') ? 'is-invalid' : ''}`} value={this.state.order_id} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('order_id')}				  
 				          </div>
@@ -186,7 +275,9 @@ render() {
                     value={this.state.sku}
                     onChange={this.onChange}
                     onSelect={this.onSelect}
+                    menuStyle={{ zIndex: '1' }}
                     inputProps={{name: "sku", className: "form-control"}}
+                    wrapperStyle={{}}
              	  />
             	</div>
 								</div> 
@@ -201,6 +292,30 @@ render() {
 				            {this.renderErrorFor('product_title')}				  
 				          </div>
 				        </div>
+
+
+				        <div className="row">
+							<div className="col-md-4"></div>
+				        		<div className="form-group col-md-5">
+						  			 <label>Customer ID</label>
+						  <div>						  			 
+                <Autocomplete  
+                    getItemValue={this.getItemValueCust}
+                    items={this.state.autocompleteData1}
+                    renderItem={this.renderItemCust}
+                    value={this.state.customer_id}
+                    onChange={this.onChangeCust}
+                    onSelect={this.onSelectCust}
+                    menuStyle={{ zIndex: '1' }}
+                    wrapperStyle={{}}
+                    inputProps={{name: "customer_id", className: "form-control"}}
+             	  />
+            			</div>
+								</div> 
+				 			</div>
+
+
+
 
 				        <div className="row">
 				          <div className="col-md-4"></div>
@@ -256,12 +371,12 @@ render() {
 				          </div>
 				        </div>
 
-				        <div class="row">
-						<div class="col-md-4"></div>
-				        <div class="form-group col-md-4">
-						  <label for="item_status">Item Status</label>
-						  <select class="form-control" name="item_status">
-						  	<option disabled selected value></option>
+				        <div className="row">
+						<div className="col-md-4"></div>
+				        <div className="form-group col-md-5">
+						  <label>Item Status</label>
+						  <select className="form-control" name="item_status" value={this.state.item_status} onChange={this.handleFieldChange}>
+						  	<option value="null"> </option>
 						    <option value="0">0 - Not requested</option>
 						    <option value="1">1 - Requested</option>
 						    <option value="2">2 - Confirmed</option>
@@ -272,12 +387,12 @@ render() {
 						</div>
 					</div>
 
-					<div class="row">
-						<div class="col-md-4"></div>
-				        <div class="form-group col-md-4">
-						  <label for="notified">Notified</label>
-						  <select class="form-control" name="notified">
-						  	<option disabled selected value></option>
+					<div className="row">
+						<div className="col-md-4"></div>
+				        <div className="form-group col-md-5">
+						  <label>Notified</label>
+						  <select className="form-control" name="notified" value={this.state.notified} onChange={this.handleFieldChange}>
+						  	<option value="null"> </option>
 						    <option value="0">0 - Customer not notified about status</option>
 						    <option value="1">1 - Customer notified about status</option>
 						    <option value="2">2 - Customer not notified about arrival</option>
@@ -286,12 +401,12 @@ render() {
 						</div>
 					</div>
 
-					<div class="row">
-						<div class="col-md-4"></div>
-				        <div class="form-group col-md-4">
-						  <label for="customer_status">Customer Status</label>
-						  <select class="form-control" name="customer_status">
-						  	<option disabled selected value></option>
+					<div className="row">
+						<div className="col-md-4"></div>
+				        <div className="form-group col-md-5">
+						  <label>Customer Status</label>
+						  <select className="form-control" name="customer_status" value={this.state.customer_status} onChange={this.handleFieldChange}>
+						  	<option value="null"> </option>
 						    <option value="0">0 - Request</option>
 						    <option value="1">1 - Price offer</option>
 						    <option value="2">2 - Negotiation</option>
@@ -300,8 +415,6 @@ render() {
 						  </select>
 						</div>
 					</div>
-
-
 
 				 						
 			         				 <div className="form-group col-md-5">
@@ -319,4 +432,4 @@ render() {
 
 };
 
-export default OrderItemsCreate;
+export default OrderItemsEdit;

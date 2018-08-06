@@ -12,6 +12,7 @@ class Orders extends Component {
 			order_no: '',
 			status: '',
 			supplier: '',
+			message: '',
 			autocompleteData: [],
 			errors: []
 		}
@@ -44,6 +45,7 @@ retrieveDataAsynchronously(searchText){
 
        console.log(errors);
      })
+
     }
     
 
@@ -125,13 +127,14 @@ retrieveDataAsynchronously(searchText){
 			//redirecting
 			history.push('/oorders/list')
 
+
 		}).catch(error => {
 			this.setState({
 				errors: error.response.data.errors
 			})
 		})
-		
 	}
+
 
 render() {
 	
@@ -145,6 +148,8 @@ render() {
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
+
+               
 
 		                <div className="row">
 				          <div className="col-md-4"></div>

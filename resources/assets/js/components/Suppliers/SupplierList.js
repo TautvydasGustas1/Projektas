@@ -10,8 +10,13 @@ constructor () {
     super()
 
     this.state = {
-      suppliers: []
+      suppliers: [],
+      direction: 'asc',
+      arrow: '↑',
+      name: ''
+
     }
+    this.sortBy = this.sortBy.bind(this);
  
   }
 
@@ -38,13 +43,21 @@ constructor () {
 		}).catch(error => {
 			console.log(error)
 		})
+	}
 
+	sortBy(key) {
+		this.setState({
+			suppliers: this.state.suppliers.sort((a, b) =>  
+			this.state.direction === 'asc' ? a[key].toLowerCase() < b[key].toLowerCase() : b[key].toLowerCase() < a[key].toLowerCase()),
+			direction: this.state.direction === 'asc' ? 'desc' : 'asc',
+			arrow: this.state.arrow === '↓' ? '↑' : '↓'
+ 		})
+ 			this.state.name = key
 	}
 
 
 render() {
 	const { suppliers } = this.state
-
 
 	return(
 <div className="container">
@@ -60,12 +73,12 @@ render() {
 					<table className="table"> 
 						<thead>
 						<tr>
-							<th>Code</th>
-							<th>Title</th>
-							<th>Adress</th>
-							<th>Contact</th>
-							<th>Email</th>
-							<th>Phone</th>
+							<th onClick={this.sortBy.bind(this, 'code')}>Code {this.state.name === 'code' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'title')}>Title {this.state.name === 'title' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'address')}>Adress {this.state.name === 'address' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'contact')}>Contact {this.state.name === 'contact' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'email')}>Email {this.state.name === 'email' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'phone')}>Phone {this.state.name === 'phone' ? this.state.arrow : ''}</th>
 						</tr>
 							
 						</thead>
@@ -97,4 +110,6 @@ render() {
 }
 }
 
+
 export default SuppliersList;
+
