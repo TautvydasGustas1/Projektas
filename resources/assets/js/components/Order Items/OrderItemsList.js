@@ -11,8 +11,10 @@ constructor () {
 
     this.state = {
       orderItems: [],
-      orderName: ''
+      orderName: '',
+      input: ''
     }
+    this.handleChange = this.handleChange.bind(this);
  
   }
 
@@ -49,12 +51,202 @@ constructor () {
 
 	}
 
+	sortBy(key) {
+	var dir = this.state.direction;
+
+	this.state.orderItems.forEach(function(entry) {
+			
+
+				if(entry.sku === null)
+				{
+					entry.sku = ''
+				}
+
+				if(entry.product_title === null)
+				{
+					entry.product_title = ''
+				}
+
+				if(entry.customer_title === null)
+				{
+					entry.customer_title = ''
+				}
+
+				if(entry.contact_info === null)
+				{
+					entry.contact_info = ''
+				}
+				if(entry.deadline === null)
+				{
+					entry.deadline = ''
+				}
+				if(entry.leadtime === null)
+				{
+					entry.leadtime = ''
+				}
+		});
+
+		this.state.orderItems =  this.state.orderItems.sort(function(a, b) {
+
+
+	if(key === 'sku' || key === 'product_title' || key === 'customer_title' || key === 'contact_info' || key === 'deadline' || key === 'leadtime')
+	{
+		  var nameA = a[key].toString().toUpperCase(); 
+		  var nameB = b[key].toString().toUpperCase();
+
+		  if(dir === 'asc')
+		  {
+			  if (nameA < nameB) {
+			    return -1;
+			  }
+			  if (nameA > nameB) {
+			    return 1;
+			  }
+			  return 0;
+		  }
+		  else 
+		  {
+		  	if (nameB < nameA) {
+			    return -1;
+			  }
+			  if (nameB > nameA) {
+			    return 1;
+			  }
+			  return 0;
+		  }	
+	}
+	else
+	{
+		if(dir === 'asc')
+		{
+			return a[key] - b[key];
+		}
+		else
+		{
+			return b[key] - a[key];
+		}
+	}
+
+			});
+
+
+		this.setState({
+		direction: this.state.direction === 'asc' ? 'desc' : 'asc',
+		arrow: this.state.arrow === '↓' ? '↑' : '↓'
+ 		})
+
+ 			this.state.name = key
+
+		}
+
+		handleChange(event) {
+		this.setState({
+			input: event.target.value
+		})
+	}
+
+
+
 
 render() {
 	const { orderItems } = this.state
 	const { orderName } = this.state
 	const orderItemId = this.props.match.params.id
-    
+
+	let FilteredList = orderItems.filter(word => {
+
+				if(word.order_id === null)
+				{
+					word.order_id = ''
+				}
+				if(word.sku === null)
+				{
+					word.sku = ''
+				}
+				if(word.product_title === null)
+				{
+					word.product_title = ''
+				}
+				if(word.contact_info === null)
+				{
+					word.contact_info = ''
+				}
+				if(word.price === null)
+				{
+					word.price = ''
+				}
+				if(word.qty === null)
+				{
+					word.qty = ''
+				}
+				if(word.deadline === null)
+				{
+					word.deadline = ''
+				}
+				if(word.leadtime === null)
+				{
+					word.leadtime = ''
+				}
+				if(word.item_status === null)
+				{
+					word.item_status = ''
+				}
+				if(word.notified === null)
+				{
+					word.notified = ''
+				}
+				if(word.customer_status === null)
+				{
+					word.customer_status = ''
+				}
+
+			if(word.order_id.toString().indexOf(this.state.input) !== -1)
+			{
+				return true;
+			}
+			if(word.sku.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.product_title.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.contact_info.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.price.toString().indexOf(this.state.input) !== -1)
+			{
+				return true;
+			}
+			if(word.qty.toString().indexOf(this.state.input) !== -1)
+			{
+				return true;
+			}
+			if(word.deadline.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.leadtime.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.item_status.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.notified.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.customer_status.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+
+		});
+
 
 
 
@@ -71,30 +263,29 @@ render() {
 					<table className="table"> 
 						<thead>
 						<tr>
-							<th>Order ID</th>
-							<th>Sku</th>
-							<th>Product Title</th>
-							<th>Customer ID</th>
-							<th>Customer Title</th>
-							<th>Contact Info</th>
-							<th>Price</th>
-							<th>Quantity</th>
-							<th>Deadline</th>
-							<th>Leadtime</th>
-							<th>Item Status</th>
-							<th>Notified</th>
-							<th>Customer Status</th>
+							<th onClick={this.sortBy.bind(this, 'order_id')}>Order ID {this.state.name === 'order_id' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'sku')}>Sku {this.state.name === 'sku' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'product_title')}>Product Title {this.state.name === 'product_title' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'customer_title')}>Customer Title {this.state.name === 'customer_title' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'contact_info')}>Contact Info {this.state.name === 'contact_info' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'price')}>Price {this.state.name === 'price' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'qty')}>Quantity {this.state.name === 'qty' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'deadline')}>Deadline {this.state.name === 'deadline' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'leadtime')}>Leadtime {this.state.name === 'leadtime' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'item_status')}>Item Status {this.state.name === 'item_status' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'notified')}>Notified {this.state.name === 'notified' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'customer_status')}>Customer Status {this.state.name === 'customer_status' ? this.state.arrow : ''}</th>
+							<th><input placeholder="Filter..." value={this.state.input} onChange={this.handleChange}/></th>
 						</tr>
 							
 						</thead>
 			<tbody>
 				
-							{orderItems.map(orderItem =>(
+							{FilteredList.map(orderItem =>(
 								<tr key={orderItem.id}> 
 								<td>{orderItem.order_id}</td>
 								<td>{orderItem.sku}</td>
 								<td>{orderItem.product_title}</td>
-								<td>{orderItem.customer_id}</td>
 								<td>{orderItem.customer_title}</td>
 								<td>{orderItem.contact_info}</td>
 								<td>{orderItem.price}</td>
@@ -104,13 +295,12 @@ render() {
 								<td>{orderItem.item_status}</td>
 								<td>{orderItem.notified}</td>
 								<td>{orderItem.customer_status}</td>
+								<td></td>
 								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
 								<td><div className='btn btn-danger btn-sm' onClick={this.deleteUser.bind(this, orderItem)}>Delete</div></td>
 								</tr>
-								))}
-									
+								))}					
 			</tbody>
-                
 						</table>
                 
                 </div>

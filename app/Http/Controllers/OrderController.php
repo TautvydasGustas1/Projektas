@@ -53,7 +53,7 @@ class OrderController extends Controller
         $supplier = Supplier::all();
 
 
-       
+       return $order->toJson();
     }
 
     

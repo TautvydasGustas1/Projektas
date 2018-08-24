@@ -36,17 +36,17 @@ class App extends Component {
 					<Header/>
 					<Switch>
 						<Route  exact path='/oorder/:id/items/:id2' component={OrderItemsEdit} />
+						<Route  exact path='/oorders/List' component={OrdersList} />			
+						<Route exact path='/oorders/create' component={Orders} />	
+						<Route exact path='/oorders/:id' component={OrdersEdit} />
 						<Route  path='/oorder/:id/items' component={OrderItemsList} />
 						<Route  exact path='/oorder/:id/create' component={OrderItemsCreate} />
-						<Route  path='/oorders/List' component={OrdersList} />			
 						<Route  path='/ssuppliers/list' component={SuppliersList} />
 						<Route  path='/ssuppliers/create' component={Suppliers} />
 						<Route  path='/pproducts/list' component={ProductsList} />
 						<Route  path='/pproducts/create' component={ProductsCreate} />
 						<Route  path='/pproducts/:id' component={ProductsEdit} />
 						<Route  path='/ssuppliers/:id' component={SuppliersEdit} />
-						<Route exact path='/oorders/create' component={Orders} />	
-						<Route exact path='/oorders/:id' component={OrdersEdit} />
 						<Route  path='/ccustomers/list' component={CustomersList} />
 						<Route  path='/ccustomers/create' component={Customers} />
 						<Route  path='/ccustomers/:id' component={CustomersEdit} />

@@ -13,20 +13,26 @@ constructor () {
       suppliers: [],
       direction: 'asc',
       arrow: '↑',
-      name: ''
+      name: '',
+      input: '',
+      input2: ''
 
     }
     this.sortBy = this.sortBy.bind(this);
- 
+ 	this.handleChange = this.handleChange.bind(this);
   }
+
+
 
   componentDidMount () {
     axios.get('/suppliers').then(response => {
+    	console.log(response)
       this.setState({
         suppliers: response.data
       })
     })
   }
+
 
 	deleteUser(supplier) {
 
@@ -45,19 +51,116 @@ constructor () {
 		})
 	}
 
-	sortBy(key) {
+	handleChange(event) {
 		this.setState({
-			suppliers: this.state.suppliers.sort((a, b) =>  
-			this.state.direction === 'asc' ? a[key].toLowerCase() < b[key].toLowerCase() : b[key].toLowerCase() < a[key].toLowerCase()),
+			input: event.target.value,
+		})
+	}
+
+
+	sortBy(key) {
+	var dir = this.state.direction;
+
+	this.state.suppliers.forEach(function(entry) {
+			
+				
+				if(entry.address === null)
+				{
+					entry.address = ''
+				}
+				if(entry.contact === null)
+				{
+					entry.contact = ''
+				}
+				if(entry.phone === null)
+				{
+					entry.phone = ''
+				}			
+		});
+
+		this.state.suppliers =  this.state.suppliers.sort(function(a, b) {
+		  var nameA = a[key].toUpperCase(); 
+		  var nameB = b[key].toUpperCase();
+
+		  if(dir === 'asc')
+		  {
+			  if (nameA < nameB) {
+			    return -1;
+			  }
+			  if (nameA > nameB) {
+			    return 1;
+			  }
+			  return 0;
+		  }
+		  else 
+		  {
+		  	if (nameB < nameA) {
+			    return -1;
+			  }
+			  if (nameB > nameA) {
+			    return 1;
+			  }
+			  return 0;
+		  }
+
+			});
+
+
+		this.setState({
 			direction: this.state.direction === 'asc' ? 'desc' : 'asc',
 			arrow: this.state.arrow === '↓' ? '↑' : '↓'
  		})
  			this.state.name = key
-	}
+}
 
 
 render() {
+
 	const { suppliers } = this.state
+	
+		let FilteredList = suppliers.filter(word => {
+
+			if(word.address === null)
+				{
+					word.address = ''
+				}
+				if(word.contact === null)
+				{
+					word.contact = ''
+				}
+				if(word.phone === null)
+				{
+					word.phone = ''
+				}
+
+			if(word.code.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.title.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.address.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.contact.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.email.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.phone.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+
+		});
+
+
 
 	return(
 <div className="container">
@@ -79,12 +182,14 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'contact')}>Contact {this.state.name === 'contact' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'email')}>Email {this.state.name === 'email' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'phone')}>Phone {this.state.name === 'phone' ? this.state.arrow : ''}</th>
+							<th><input placeholder="Filter..." value={this.state.input} onChange={this.handleChange}/></th>
 						</tr>
+						
 							
 						</thead>
 			<tbody>
 							
-							{suppliers.map(supplier =>(
+							{FilteredList.map(supplier =>(
 								<tr key={supplier.id}> 
 								<td>{supplier.code}</td>
 								<td>{supplier.title}</td>
@@ -92,6 +197,7 @@ render() {
 								<td>{supplier.contact}</td>
 								<td>{supplier.email}</td>
 								<td>{supplier.phone}</td>
+								<td></td>
 								<td><Link to={`/ssuppliers/${supplier.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
 								<td><div className='btn btn-danger btn-sm' onClick={this.deleteUser.bind(this, supplier)}>Delete</div></td>
 								</tr>

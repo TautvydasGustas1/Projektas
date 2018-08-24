@@ -29,8 +29,7 @@ handleClick (e) {
         })
         console.log(this.state.order_id)
         
-      })
-       if(this.state.order_id === '')
+       if(this.state.order_id === null)
         {
           window.location.pathname = `/oorders/list`;
         }
@@ -38,6 +37,7 @@ handleClick (e) {
         {
            window.location.pathname = `/oorder/${this.state.order_id}/items`;
         }
+      })
    }
     
 

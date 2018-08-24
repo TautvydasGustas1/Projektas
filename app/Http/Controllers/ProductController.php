@@ -10,9 +10,12 @@ class ProductController extends Controller
     public function __construct() {
         $this->middleware('auth');
     }
-        public function index() {
+        public function index(Request $request) {
 
-        $products = Product::all();
+
+        $products = Product::limit(25)->skip(25+$request->page)->get();
+
+        
         return $products->toJson();
     }
 
@@ -64,6 +67,7 @@ class ProductController extends Controller
     public function delete($id) {
             $product = Product::find($id);
             $product->delete();
+
 
 
         return response()->json('Supplier deleted');

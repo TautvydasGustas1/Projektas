@@ -158,7 +158,7 @@ render() {
    			 <div className="row justify-content-center">
         		<div className="col-md-8">
            			 <div className="card">
-		                <div className="card-header" align="center"><h1>Create Order</h1></div>
+		                <div className="card-header" align="center"><h1>Edit Order</h1></div>
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		                

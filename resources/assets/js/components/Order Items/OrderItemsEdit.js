@@ -13,7 +13,6 @@ class OrderItemsEdit extends Component {
 			name: '',
 			sku: '',
 			product_title: '',
-			customer_id: '',
 			customer_title: '',
 			contact_info: '',
 			price: '',
@@ -97,7 +96,7 @@ retrieveDataAsynchronously(searchText){
     }
 
 
-    // Autocomplete for customer ID
+    // Autocomplete for customer Title
 
 retrieveDataAsynchronouslyCust(searchText){
        const orderItemId = this.props.match.params.id
@@ -119,7 +118,7 @@ retrieveDataAsynchronouslyCust(searchText){
 
     onChangeCust(e){
         this.setState({
-            customer_id: e.target.value
+            customer_title: e.target.value
            
         });
             
@@ -131,7 +130,7 @@ retrieveDataAsynchronouslyCust(searchText){
     onSelectCust(val){
 
         this.setState({
-            customer_id: val
+            customer_title: val
         });
 
     }
@@ -148,7 +147,7 @@ retrieveDataAsynchronouslyCust(searchText){
     
     getItemValueCust(item){
         
-        return `${item.id}`;
+        return `${item.last_name}`;
     }
 
    			 //Autocomplete
@@ -167,7 +166,6 @@ componentDidMount () {
        name: response.data.order_no,
        order_id: response.data.order_id,
        sku: response.data.sku,
-       customer_id: response.data.customer_id,
        customer_title: response.data.customer_title,
        contact_info: response.data.contact_info,
        product_title: response.data.product_title,
@@ -215,7 +213,6 @@ componentDidMount () {
 			order_id: this.state.order_id,
 			sku: this.state.sku,
 			product_title: this.state.product_title,
-			customer_id: this.state.customer_id,
 			customer_title: this.state.customer_title,
 			product_title: this.state.product_title,
 			contact_info: this.state.contact_info,
@@ -297,34 +294,23 @@ render() {
 				        <div className="row">
 							<div className="col-md-4"></div>
 				        		<div className="form-group col-md-5">
-						  			 <label>Customer ID</label>
+						  			 <label>Customer Title</label>
 						  <div>						  			 
                 <Autocomplete  
                     getItemValue={this.getItemValueCust}
                     items={this.state.autocompleteData1}
                     renderItem={this.renderItemCust}
-                    value={this.state.customer_id}
+                    value={this.state.customer_title}
                     onChange={this.onChangeCust}
                     onSelect={this.onSelectCust}
                     menuStyle={{ zIndex: '1' }}
                     wrapperStyle={{}}
-                    inputProps={{name: "customer_id", className: "form-control"}}
+                    inputProps={{name: "customer_title", className: "form-control"}}
              	  />
             			</div>
 								</div> 
 				 			</div>
 
-
-
-
-				        <div className="row">
-				          <div className="col-md-4"></div>
-				         	 <div className="form-group col-md-5">				         	 	
-				             <label>Customer Title</label>
-				            <input id="customer_title" type="customer_title" name="customer_title" className={`form-control ${this.hasErrorFor('customer_title') ? 'is-invalid' : ''}`} value={this.state.customer_title} onChange={this.handleFieldChange}/>
-				            {this.renderErrorFor('customer_title')}				  
-				          </div>
-				        </div>
 
 				        <div className="row">
 				          <div className="col-md-4"></div>

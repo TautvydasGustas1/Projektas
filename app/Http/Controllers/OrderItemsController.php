@@ -99,6 +99,7 @@ class OrderItemsController extends Controller
     {
         $id = Order_Items::latest()->get()->first();
 
+
         return $id->toJson();
     }
 

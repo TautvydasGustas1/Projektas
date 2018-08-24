@@ -13,9 +13,11 @@ constructor () {
       orders: [],
       direction: 'asc',
       arrow: '↑',
-      name: ''
+      name: '',
+      temp: [],
+      input: ''
     }
- 
+ this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount () {
@@ -44,10 +46,49 @@ constructor () {
 	}
 
 	sortBy(key) {
+	var dir = this.state.direction;
+
+		this.state.orders.forEach(function(entry) {
+			
+				if(entry.status === null)
+				{
+					entry.status = ''
+				}
+				if(entry.supplier === null)
+				{
+					entry.supplier = ''
+				}			
+		});
+
+		this.state.orders =  this.state.orders.sort(function(a, b) {
+		  var nameA = a[key].toUpperCase(); 
+		  var nameB = b[key].toUpperCase();
+
+		  if(dir === 'asc')
+		  {
+			  if (nameA < nameB) {
+			    return -1;
+			  }
+			  if (nameA > nameB) {
+			    return 1;
+			  }
+			  return 0;
+		  }
+		  else 
+		  {
+		  	if (nameB < nameA) {
+			    return -1;
+			  }
+			  if (nameB > nameA) {
+			    return 1;
+			  }
+			  return 0;
+		  }
+
+			});
+
 
 		this.setState({
-			orders: this.state.orders.sort((a, b) => 
-			this.state.direction === 'asc' ? a[key].toLowerCase() < b[key].toLowerCase() : b[key].toLowerCase() < a[key].toLowerCase()),
 			direction: this.state.direction === 'asc' ? 'desc' : 'asc',
 			arrow: this.state.arrow === '↓' ? '↑' : '↓'
  		})
@@ -55,8 +96,41 @@ constructor () {
  			this.state.name = key
 	}
 
+	handleChange(event) {
+		this.setState({
+			input: event.target.value,
+		})
+	}
+
 render() {
 	const { orders } = this.state
+
+	let FilteredList = orders.filter(word => {
+
+			if(word.status === null)
+				{
+					word.status = ''
+				}
+				if(word.supplier === null)
+				{
+					word.supplier = ''
+				}	
+
+			if(word.order_no.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.status.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.supplier.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+
+		});
+
 
 
 	return(
@@ -76,16 +150,18 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'order_no')}>Order No {this.state.name === 'order_no' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'status')}>Status {this.state.name === 'status' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'supplier')}>Supplier {this.state.name === 'supplier' ? this.state.arrow : ''}</th>
+							<th><input placeholder="Filter..." value={this.state.input} onChange={this.handleChange}/></th>
 							
 						</tr>
 							
 						</thead>
 			<tbody>							
-							{orders.map(order =>(
+							{FilteredList.map(order =>(
 								<tr key={order.id}> 
 								<td>{order.order_no}</td>
 								<td>{order.status}</td>
 								<td>{order.supplier}</td>
+								<td></td>
 								<td><Link to={`/oorders/${order.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
 								<td><Link to={`/oorder/${order.id}/create`} className='btn btn-success btn-sm'>Add items</Link></td>
 								<td><Link to={`/oorder/${order.id}/items`} className='btn btn-primary btn-sm'>Show items</Link></td>
@@ -106,3 +182,4 @@ render() {
 }
 }
 export default OrdersList;
+
