@@ -13,9 +13,9 @@ class ProductController extends Controller
         public function index(Request $request) {
 
 
-        $products = Product::limit(25)->skip(25+$request->page)->get();
+        $products = Product::limit(25)->skip($request->page)->get();
 
-        
+       
         return $products->toJson();
     }
 
@@ -71,5 +71,18 @@ class ProductController extends Controller
 
 
         return response()->json('Supplier deleted');
+    }
+
+
+    public function getReactSearch(Request $request)
+    {
+
+        $string = request()->q;
+        $new_string = str_replace('+', '%2B', $string);
+
+        $products = Product::where('title', 'like', '%' .request()->q.'%')
+        ->orWhere('sku', 'like', '%'.request()->q. '%')->limit(30)->get();
+
+        return $products->toJson();
     }
 }

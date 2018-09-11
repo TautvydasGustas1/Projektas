@@ -13,12 +13,12 @@ class OrderController extends Controller
         $this->middleware('auth');
     }
     
-    public function index(Supplier $supplier) {
+    public function index(Request $request) {
 
-        $orders = Order::all();
-        $supplier = Supplier::all();
-        $Supplier = Supplier::find($supplier);
+        $orders = Order::limit(25)->skip($request->page)->get();
 
+      
+       
         return $orders->toJson();
     }
 
@@ -88,5 +88,14 @@ class OrderController extends Controller
     {
         $supplier = Supplier::where('code', 'like', '%'.request()->title.'%')->limit(10)->get();
         return response()->json($supplier);
+    }
+
+      public function getReactSearch(Request $request)
+    {
+
+        $order = Order::where('order_no', 'like', '%'.request()->q.'%')
+        ->orWhere('supplier', 'like', '%'.request()->q . '%')->limit(30)->get();
+
+        return $order->toJson();
     }
 }

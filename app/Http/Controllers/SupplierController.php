@@ -12,11 +12,13 @@ class SupplierController extends Controller
    	}
 
 
-   	public function index() {
+   	public function index(Request $request) {
 
-   		$suppliers = Supplier::all();
-         
-   		return $suppliers->toJson();
+   		$supplier = Supplier::limit(25)->skip($request->page)->get();
+
+      
+       
+        return $supplier->toJson();
    	}
 
    	public function create() {
@@ -71,6 +73,15 @@ class SupplierController extends Controller
         return response()->json('Supplier deleted');
     
    	}
+
+      public function getReactSearch(Request $request)
+    {
+
+        $suppliers = Supplier::where('title', 'like', '%'.request()->q.'%')
+        ->orWhere('code', 'like', '%'.request()->q . '%')->limit(30)->get();
+
+        return $suppliers->toJson();
+    }
 
 
 }

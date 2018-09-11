@@ -262,7 +262,7 @@ render() {
                     onSelect={this.onSelect}
                     menuStyle={{ zIndex: '1' }}
                     inputProps={{name: "sku", className: "form-control"}}
-                    wrapperStyle={{}}
+                    
              	  />
             	</div>
 								</div> 

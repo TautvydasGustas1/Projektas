@@ -15,17 +15,15 @@ class OrderItemsController extends Controller
         $this->middleware('auth');
     }
     
-    public function index(Order $order) {
+    public function index(Order $order, Request $request) {
 
-           
 
-       $order_items = Order_Items::where('order_id', $order->id)->get();
-       $order_item["items"] = $order_items;
-       $order_item["order"] = $order;
+       $order_item = Order_Items::where('order_id', $order->id)->limit(25)->skip($request->page)->get();
+       
 
-        return json_encode($order_item);
-      // return $order_items->toJson();
 
+      
+        return $order_item->toJson();
     }
     
     public function create(Customer $customers, Product $skus, Order $order) {
@@ -101,6 +99,17 @@ class OrderItemsController extends Controller
 
 
         return $id->toJson();
+    }
+
+    public function getReactSearch(Request $request)
+    {
+
+        $order_items = Order_Items::where('sku', 'like', '%'.request()->q.'%')
+        ->orWhere('product_title', 'like', '%'.request()->q . '%')
+        ->orWhere('customer_title', 'like', '%'.request()->q . '%')
+        ->orWhere('contact_info', 'like', '%'.request()->q . '%')->limit(30)->get();
+
+        return $order_items->toJson();
     }
 
 }

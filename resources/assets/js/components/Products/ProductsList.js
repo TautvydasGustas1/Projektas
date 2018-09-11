@@ -14,20 +14,23 @@ constructor () {
        direction: 'asc',
       arrow: '↑',
       name: '',
-      temp: [],
       input: '',
+      query: '',
       message: '',
       tempArray: [],
       page: 10,
+      results: [],
       height: window.innerHeight,
       autocompleteData: []
 
     }
-  this.sortBy = this.sortBy.bind(this);
-  this.handleChange = this.handleChange.bind(this);
-  this.handleScroll = this.handleScroll.bind(this);
+		  this.sortBy = this.sortBy.bind(this);
+		  this.handleChange = this.handleChange.bind(this);
+		  this.handleScroll = this.handleScroll.bind(this);
+		  this.handleChangeSearch = this.handleChangeSearch.bind(this);
+		  this.GetSearchResults = this.GetSearchResults.bind(this);
 
- 		 this.onChange = this.onChange.bind(this);
+ 		this.onChange = this.onChange.bind(this);
         this.onSelect = this.onSelect.bind(this);
         this.getItemValue = this.getItemValue.bind(this);
         this.renderItem = this.renderItem.bind(this);
@@ -38,14 +41,14 @@ constructor () {
 
 retrieveDataAsynchronously(searchText){
        
-
-        axios.get('/orders/api?title='+searchText).then(response => {
+        axios.get('/products/search?q='+searchText).then(response => {
  
          this.setState({
 
            autocompleteData: response.data
          });
         
+
 
      }).catch(errors => {
 
@@ -57,7 +60,7 @@ retrieveDataAsynchronously(searchText){
 
     onChange(e){
         this.setState({
-            products: e.target.value
+            query: e.target.value
            
         });
             
@@ -69,16 +72,20 @@ retrieveDataAsynchronously(searchText){
     onSelect(val){
 
         this.setState({
-            products: val
+            query: val
         });
+      
 
     }
 
    
     renderItem(item, isHighlighted){
+
+        	
         return (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item.code}
+            <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+             {item.title} 
+             
             </div>   
         ); 
     }
@@ -86,7 +93,7 @@ retrieveDataAsynchronously(searchText){
     
     getItemValue(item){
         
-        return `${item.code}`;
+        return `${item.title}`;
     }
 
 
@@ -130,6 +137,7 @@ retrieveDataAsynchronously(searchText){
   componentWillUnmount() {
     window.removeEventListener("scroll", this.handleScroll);
   }
+
 
 
 	deleteUser(product) {
@@ -219,6 +227,31 @@ retrieveDataAsynchronously(searchText){
 		})
 	}
 
+	handleChangeSearch(event) {
+		this.setState({
+			query: event.target.value,
+		})
+	}
+
+	GetSearchResults() {
+
+	var str = this.state.query;
+	var res = str.replace("+", "%2B");
+
+    axios.get('/products/search?q='+res).then(response => {
+	     	 this.setState({
+	       products: response.data
+
+	      });
+
+	     }).catch(errors => {
+
+       console.log(errors);
+     })
+    
+  }
+
+
 render() {
 	const { products } = this.state
 
@@ -274,6 +307,37 @@ render() {
             <div className="card">
                 <div className="card-header"><h1 align="center">Products</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Product</Link>
+
+                <div className="container">
+                <div className="row align-items-center" style={{paddingTop: "15px"}}> 
+                	<div className="col-md-auto align-self-end">
+                		
+                		<div className="input-group">
+							 <Autocomplete  
+			                    getItemValue={this.getItemValue}
+			                    items={this.state.autocompleteData}
+			                    renderItem={this.renderItem}
+			                    value={this.state.query}
+			                    onChange={this.onChange}
+			                    onSelect={this.onSelect}
+			                    menuStyle = {{position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
+			                    inputProps={{className: "form-control", placeholder: "Search..."}}
+			             	  />
+			             	 	 <div className="input-group-append">
+							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span class="oi oi-magnifying-glass"></span></button>
+			             	  	</div>
+			            </div>
+
+                	</div>
+                		<div className="col-md-auto align-self-end">
+                		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
+   						  <ul className="dropdown-menu">
+			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
+   						  </ul>
+                		</div>
+                	
+                </div>
+                </div>
                 
 
                 <div className="card-body">
@@ -287,18 +351,7 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'price')}>Price {this.state.name === 'price' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'special_price')}>Special Price {this.state.name === 'special_price' ? this.state.arrow : ''}</th>
 							</tr>
-							<tr>
-							<th><input placeholder="Filter..." value={this.state.input} onChange={this.handleChange}/></th>
-							<th> <Autocomplete  
-			                    getItemValue={this.getItemValue}
-			                    items={this.state.autocompleteData}
-			                    renderItem={this.renderItem}
-			                    value={this.state.products}
-			                    onChange={this.onChange}
-			                    onSelect={this.onSelect}
-			             	  />
-			            	</th>
-						</tr>
+							
 						</thead>
 			<tbody>
 							{FilteredList.map(product =>(
@@ -308,8 +361,8 @@ render() {
 								<td>{product.cost}</td>
 								<td>{product.price}</td>
 								<td>{product.special_price}</td>
-								<td><Link to={`/pproducts/${product.id}`} className='btn btn-info btn-sm'>Edit</Link></td>
-								<td><div className='btn btn-danger btn-sm' onClick={this.deleteUser.bind(this, product)}>Delete</div></td>
+								<td><Link to={`/pproducts/${product.id}`} className='btn btn-info btn-sm' title="Edit"><span class="oi oi-wrench"></span></Link></td>
+								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, product)}><span class="oi oi-trash"></span></div></td>
 								</tr>
 								))}
 									

@@ -31,6 +31,7 @@ Route::post('/suppliers/{id}', 'SupplierController@update')->name('suppliers');
 Route::get('/suppliers', 'SupplierController@index')->name('suppliers');
 Route::post('/suppliers', 'SupplierController@save')->name('suppliers');
 Route::get('/suppliers/create', 'SupplierController@create')->name('suppliers');
+Route::get('/suppliers/search', 'SupplierController@getReactSearch')->name('suppliers');
 //---------------------------------
 
 // Customer
@@ -43,6 +44,7 @@ Route::get('/customers/create', 'CustomerController@create')->name('customers');
 Route::get('/customers/{id}/edit', 'CustomerController@edit')->name('customers');
 Route::delete('/customers/{id}/delete', 'CustomerController@delete')->name('customers');
 Route::post('/customers/{id}', 'CustomerController@update')->name('customers');
+Route::get('/customers/search', 'CustomerController@getReactSearch')->name('customers');
 //---------------------------------
 
 //Product
@@ -54,6 +56,7 @@ Route::post('/products/{id}', 'ProductController@update')->name('products');
 Route::get('/products', 'ProductController@index')->name('products');
 Route::post('/products', 'ProductController@save')->name('products');
 Route::get('/products/create', 'ProductController@create')->name('products');
+Route::get('/products/search', 'ProductController@getReactSearch')->name('products');
 //---------------------------------
 
 
@@ -67,6 +70,7 @@ Route::get('/orders', 'OrderController@index')->name('orders');
 Route::post('/orders', 'OrderController@save')->name('orders');
 Route::get('/orders/create', 'OrderController@create')->name('orders');
 Route::get('/orders/api', 'OrderController@API');
+Route::get('/orders/search', 'OrderController@getReactSearch')->name('orders');
 //---------------------------------
 
 //Order Items
@@ -81,11 +85,8 @@ Route::get('/order/{order}/items/create', 'OrderItemsController@create')->name('
 Route::get('/orders/{order}/api', 'OrderItemsController@API');
 Route::get('/orders/{order}/CustomerApi', 'OrderItemsController@CustomerAPI');
 Route::get('headerRequest', 'OrderItemsController@headerRequest');
+Route::get('/order/{order}/search', 'OrderItemsController@getReactSearch')->name('order_items');
 //---------------------------------
-
-
-
-
 
 Route::view('/oorders/{path?}', 'layouts/app');
 Route::view('/ssuppliers/{path?}', 'layouts/app');

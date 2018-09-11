@@ -71,7 +71,7 @@ retrieveDataAsynchronously(searchText){
    
     renderItem(item, isHighlighted){
         return (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+            <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
                 {item.code}
             </div>   
         ); 

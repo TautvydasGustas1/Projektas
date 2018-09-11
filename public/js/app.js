@@ -60622,7 +60622,7 @@ var Orders = function (_Component) {
 				value: function renderItem(item, isHighlighted) {
 						return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
-								{ style: { background: isHighlighted ? 'lightgray' : 'white' } },
+								{ key: item.id, style: { background: isHighlighted ? 'lightgray' : 'white' } },
 								item.code
 						);
 				}
@@ -61732,6 +61732,8 @@ var OrderEdit = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_router_dom__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -61758,11 +61760,28 @@ var OrdersList = function (_Component) {
 			arrow: '↑',
 			name: '',
 			temp: [],
-			input: ''
+			input: '',
+			page: 0,
+			query: '',
+			autocompleteData: [],
+			height: window.innerHeight
 		};
 		_this.handleChange = _this.handleChange.bind(_this);
+
+		_this.handleScroll = _this.handleScroll.bind(_this);
+		_this.GetSearchResults = _this.GetSearchResults.bind(_this);
+		_this.handleChangeSearch = _this.handleChangeSearch.bind(_this);
+
+		_this.onChange = _this.onChange.bind(_this);
+		_this.onSelect = _this.onSelect.bind(_this);
+		_this.getItemValue = _this.getItemValue.bind(_this);
+		_this.renderItem = _this.renderItem.bind(_this);
+		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
 		return _this;
 	}
+
+	//	Lazy Load
+	//------------------
 
 	_createClass(OrdersList, [{
 		key: 'componentDidMount',
@@ -61774,7 +61793,121 @@ var OrdersList = function (_Component) {
 					orders: response.data
 				});
 			});
+			window.addEventListener("scroll", this.handleScroll);
 		}
+	}, {
+		key: 'handleScroll',
+		value: function handleScroll() {
+			var _this3 = this;
+
+			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+			var body = document.body;
+			var html = document.documentElement;
+			var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var windowBottom = windowHeight + window.pageYOffset + 10;
+
+			if (windowBottom >= docHeight) {
+
+				this.state.page += 25;
+				__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/orders?page=' + this.state.page).then(function (response) {
+
+					_this3.setState({
+						orders: [].concat(_toConsumableArray(_this3.state.orders), _toConsumableArray(response.data))
+					});
+				});
+			}
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			window.removeEventListener("scroll", this.handleScroll);
+		}
+
+		//--------------------
+
+
+		// Search
+		//----------------------------------------------------
+
+	}, {
+		key: 'handleChangeSearch',
+		value: function handleChangeSearch(event) {
+			this.setState({
+				query: event.target.value
+			});
+		}
+	}, {
+		key: 'GetSearchResults',
+		value: function GetSearchResults() {
+			var _this4 = this;
+
+			var str = this.state.query;
+			var res = str.replace("+", "%2B");
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/orders/search?q=' + res).then(function (response) {
+
+				_this4.setState({
+					orders: response.data
+
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'retrieveDataAsynchronously',
+		value: function retrieveDataAsynchronously(searchText) {
+			var _this5 = this;
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/orders/search?q=' + searchText).then(function (response) {
+
+				_this5.setState({
+
+					autocompleteData: response.data
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'onChange',
+		value: function onChange(e) {
+			this.setState({
+				query: e.target.value
+
+			});
+
+			this.retrieveDataAsynchronously(e.target.value);
+		}
+	}, {
+		key: 'onSelect',
+		value: function onSelect(val) {
+
+			this.setState({
+				query: val
+			});
+		}
+	}, {
+		key: 'renderItem',
+		value: function renderItem(item, isHighlighted) {
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				{ key: item.id, style: { background: isHighlighted ? 'lightgray' : 'white' } },
+				item.order_no
+			);
+		}
+	}, {
+		key: 'getItemValue',
+		value: function getItemValue(item) {
+
+			return '' + item.order_no;
+		}
+
+		//Autocomplete
+		//----------------------------------------------
+
 	}, {
 		key: 'deleteUser',
 		value: function deleteUser(order) {
@@ -61847,7 +61980,7 @@ var OrdersList = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this6 = this;
 
 			var orders = this.state.orders;
 
@@ -61861,13 +61994,13 @@ var OrdersList = function (_Component) {
 					word.supplier = '';
 				}
 
-				if (word.order_no.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.order_no.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.status.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.status.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.supplier.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.supplier.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
 			});
@@ -61900,6 +62033,55 @@ var OrdersList = function (_Component) {
 							),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
+								{ className: 'container' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'div',
+									{ className: 'row align-items-center', style: { paddingTop: "15px" } },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'input-group' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
+												getItemValue: this.getItemValue,
+												items: this.state.autocompleteData,
+												renderItem: this.renderItem,
+												value: this.state.query,
+												onChange: this.onChange,
+												onSelect: this.onSelect,
+												menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
+												inputProps: { className: "form-control", placeholder: "Search..." }
+											}),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'div',
+												{ className: 'input-group-append' },
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'button',
+													{ className: 'btn btn-primary', onClick: this.GetSearchResults },
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-magnifying-glass' })
+												)
+											)
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ className: 'btn pull-right btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown' },
+											'Filter'
+										),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'ul',
+											{ className: 'dropdown-menu' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'myInput', placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
+										)
+									)
+								)
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
 								{ className: 'card-body' },
 								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 									'table',
@@ -61927,11 +62109,6 @@ var OrdersList = function (_Component) {
 												{ onClick: this.sortBy.bind(this, 'supplier') },
 												'Supplier ',
 												this.state.name === 'supplier' ? this.state.arrow : ''
-											),
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
 											)
 										)
 									),
@@ -61963,8 +62140,8 @@ var OrdersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/oorders/' + order.id, className: 'btn btn-info btn-sm' },
-														'Edit'
+														{ to: '/oorders/' + order.id, className: 'btn btn-info btn-sm', title: 'Edit' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-wrench' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -61972,8 +62149,8 @@ var OrdersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/oorder/' + order.id + '/create', className: 'btn btn-success btn-sm' },
-														'Add items'
+														{ to: '/oorder/' + order.id + '/create', className: 'btn btn-success btn-sm', title: 'Add Items' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-plus' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -61981,8 +62158,8 @@ var OrdersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/oorder/' + order.id + '/items', className: 'btn btn-primary btn-sm' },
-														'Show items'
+														{ to: '/oorder/' + order.id + '/items', className: 'btn btn-primary btn-sm', title: 'Show List' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-list' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -61990,8 +62167,8 @@ var OrdersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'div',
-														{ className: 'btn btn-danger btn-sm', onClick: _this3.deleteUser.bind(_this3, order) },
-														'Delete'
+														{ className: 'btn btn-danger btn-sm', title: 'Delete', onClick: _this6.deleteUser.bind(_this6, order) },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-trash' })
 													)
 												)
 											);
@@ -62027,6 +62204,8 @@ var OrdersList = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_router_dom__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -62053,13 +62232,30 @@ var SuppliersList = function (_Component) {
 			arrow: '↑',
 			name: '',
 			input: '',
-			input2: ''
+			input2: '',
+			page: 0,
+			query: '',
+			autocompleteData: [],
+			height: window.innerHeight
 
 		};
 		_this.sortBy = _this.sortBy.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
+
+		_this.handleScroll = _this.handleScroll.bind(_this);
+		_this.GetSearchResults = _this.GetSearchResults.bind(_this);
+		_this.handleChangeSearch = _this.handleChangeSearch.bind(_this);
+
+		_this.onChange = _this.onChange.bind(_this);
+		_this.onSelect = _this.onSelect.bind(_this);
+		_this.getItemValue = _this.getItemValue.bind(_this);
+		_this.renderItem = _this.renderItem.bind(_this);
+		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
 		return _this;
 	}
+
+	//	Lazy Load
+	//------------------
 
 	_createClass(SuppliersList, [{
 		key: 'componentDidMount',
@@ -62067,12 +62263,126 @@ var SuppliersList = function (_Component) {
 			var _this2 = this;
 
 			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/suppliers').then(function (response) {
-				console.log(response);
 				_this2.setState({
 					suppliers: response.data
 				});
 			});
+			window.addEventListener("scroll", this.handleScroll);
 		}
+	}, {
+		key: 'handleScroll',
+		value: function handleScroll() {
+			var _this3 = this;
+
+			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+			var body = document.body;
+			var html = document.documentElement;
+			var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var windowBottom = windowHeight + window.pageYOffset + 10;
+
+			if (windowBottom >= docHeight) {
+
+				this.state.page += 25;
+				__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/suppliers?page=' + this.state.page).then(function (response) {
+
+					_this3.setState({
+						suppliers: [].concat(_toConsumableArray(_this3.state.suppliers), _toConsumableArray(response.data))
+					});
+				});
+			}
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			window.removeEventListener("scroll", this.handleScroll);
+		}
+
+		//--------------------
+
+
+		// Search
+		//----------------------------------------------------
+
+	}, {
+		key: 'handleChangeSearch',
+		value: function handleChangeSearch(event) {
+			this.setState({
+				query: event.target.value
+			});
+		}
+	}, {
+		key: 'GetSearchResults',
+		value: function GetSearchResults() {
+			var _this4 = this;
+
+			var str = this.state.query;
+			var res = str.replace("+", "%2B");
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/suppliers/search?q=' + res).then(function (response) {
+
+				_this4.setState({
+					suppliers: response.data
+
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'retrieveDataAsynchronously',
+		value: function retrieveDataAsynchronously(searchText) {
+			var _this5 = this;
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/suppliers/search?q=' + searchText).then(function (response) {
+
+				_this5.setState({
+
+					autocompleteData: response.data
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'onChange',
+		value: function onChange(e) {
+			this.setState({
+				query: e.target.value
+
+			});
+
+			this.retrieveDataAsynchronously(e.target.value);
+		}
+	}, {
+		key: 'onSelect',
+		value: function onSelect(val) {
+
+			this.setState({
+				query: val
+			});
+		}
+	}, {
+		key: 'renderItem',
+		value: function renderItem(item, isHighlighted) {
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				{ key: item.id, style: { background: isHighlighted ? 'lightgray' : 'white' } },
+				item.title
+			);
+		}
+	}, {
+		key: 'getItemValue',
+		value: function getItemValue(item) {
+
+			return '' + item.title;
+		}
+
+		//Autocomplete
+		//----------------------------------------------
+
+
 	}, {
 		key: 'deleteUser',
 		value: function deleteUser(supplier) {
@@ -62147,7 +62457,7 @@ var SuppliersList = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this6 = this;
 
 			var suppliers = this.state.suppliers;
 
@@ -62164,22 +62474,22 @@ var SuppliersList = function (_Component) {
 					word.phone = '';
 				}
 
-				if (word.code.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.code.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.title.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.title.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.address.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.address.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.contact.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.contact.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.email.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.email.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.phone.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.phone.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
 			});
@@ -62209,6 +62519,55 @@ var SuppliersList = function (_Component) {
 								__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
 								{ to: 'create', className: 'btn btn-primary' },
 								'Add Supplier'
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
+								{ className: 'container' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'div',
+									{ className: 'row align-items-center', style: { paddingTop: "15px" } },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'input-group' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
+												getItemValue: this.getItemValue,
+												items: this.state.autocompleteData,
+												renderItem: this.renderItem,
+												value: this.state.query,
+												onChange: this.onChange,
+												onSelect: this.onSelect,
+												menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
+												inputProps: { className: "form-control", placeholder: "Search..." }
+											}),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'div',
+												{ className: 'input-group-append' },
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'button',
+													{ className: 'btn btn-primary', onClick: this.GetSearchResults },
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-magnifying-glass' })
+												)
+											)
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ className: 'btn pull-right btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown' },
+											'Filter'
+										),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'ul',
+											{ className: 'dropdown-menu' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'myInput', placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
+										)
+									)
+								)
 							),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
@@ -62257,11 +62616,6 @@ var SuppliersList = function (_Component) {
 												{ onClick: this.sortBy.bind(this, 'phone') },
 												'Phone ',
 												this.state.name === 'phone' ? this.state.arrow : ''
-											),
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
 											)
 										)
 									),
@@ -62308,8 +62662,8 @@ var SuppliersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/ssuppliers/' + supplier.id, className: 'btn btn-info btn-sm' },
-														'Edit'
+														{ to: '/ssuppliers/' + supplier.id, className: 'btn btn-info btn-sm', title: 'Edit' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-wrench' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -62317,8 +62671,8 @@ var SuppliersList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'div',
-														{ className: 'btn btn-danger btn-sm', onClick: _this3.deleteUser.bind(_this3, supplier) },
-														'Delete'
+														{ className: 'btn btn-danger btn-sm', title: 'Delete', onClick: _this6.deleteUser.bind(_this6, supplier) },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-trash' })
 													)
 												)
 											);
@@ -62928,11 +63282,12 @@ var ProductsList = function (_Component) {
 			direction: 'asc',
 			arrow: '↑',
 			name: '',
-			temp: [],
 			input: '',
+			query: '',
 			message: '',
 			tempArray: [],
 			page: 10,
+			results: [],
 			height: window.innerHeight,
 			autocompleteData: []
 
@@ -62940,6 +63295,8 @@ var ProductsList = function (_Component) {
 		_this.sortBy = _this.sortBy.bind(_this);
 		_this.handleChange = _this.handleChange.bind(_this);
 		_this.handleScroll = _this.handleScroll.bind(_this);
+		_this.handleChangeSearch = _this.handleChangeSearch.bind(_this);
+		_this.GetSearchResults = _this.GetSearchResults.bind(_this);
 
 		_this.onChange = _this.onChange.bind(_this);
 		_this.onSelect = _this.onSelect.bind(_this);
@@ -62956,7 +63313,7 @@ var ProductsList = function (_Component) {
 		value: function retrieveDataAsynchronously(searchText) {
 			var _this2 = this;
 
-			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/orders/api?title=' + searchText).then(function (response) {
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/products/search?q=' + searchText).then(function (response) {
 
 				_this2.setState({
 
@@ -62971,7 +63328,7 @@ var ProductsList = function (_Component) {
 		key: 'onChange',
 		value: function onChange(e) {
 			this.setState({
-				products: e.target.value
+				query: e.target.value
 
 			});
 
@@ -62982,23 +63339,24 @@ var ProductsList = function (_Component) {
 		value: function onSelect(val) {
 
 			this.setState({
-				products: val
+				query: val
 			});
 		}
 	}, {
 		key: 'renderItem',
 		value: function renderItem(item, isHighlighted) {
+
 			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 				'div',
-				{ style: { background: isHighlighted ? 'lightgray' : 'white' } },
-				item.code
+				{ key: item.id, style: { background: isHighlighted ? 'lightgray' : 'white' } },
+				item.title
 			);
 		}
 	}, {
 		key: 'getItemValue',
 		value: function getItemValue(item) {
 
-			return '' + item.code;
+			return '' + item.title;
 		}
 
 		//Autocomplete
@@ -63119,9 +63477,34 @@ var ProductsList = function (_Component) {
 			});
 		}
 	}, {
+		key: 'handleChangeSearch',
+		value: function handleChangeSearch(event) {
+			this.setState({
+				query: event.target.value
+			});
+		}
+	}, {
+		key: 'GetSearchResults',
+		value: function GetSearchResults() {
+			var _this5 = this;
+
+			var str = this.state.query;
+			var res = str.replace("+", "%2B");
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/products/search?q=' + res).then(function (response) {
+				_this5.setState({
+					products: response.data
+
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this5 = this;
+			var _this6 = this;
 
 			var products = this.state.products;
 
@@ -63143,19 +63526,19 @@ var ProductsList = function (_Component) {
 					word.special_price = '';
 				}
 
-				if (word.sku.toLowerCase().indexOf(_this5.state.input.toLowerCase()) !== -1) {
+				if (word.sku.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.title.toLowerCase().indexOf(_this5.state.input.toLowerCase()) !== -1) {
+				if (word.title.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.cost.toString().indexOf(_this5.state.input) !== -1) {
+				if (word.cost.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
-				if (word.price.toString().indexOf(_this5.state.input) !== -1) {
+				if (word.price.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
-				if (word.special_price.toString().indexOf(_this5.state.input) !== -1) {
+				if (word.special_price.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
 			});
@@ -63185,6 +63568,55 @@ var ProductsList = function (_Component) {
 								__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
 								{ to: 'create', className: 'btn btn-primary' },
 								'Add Product'
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
+								{ className: 'container' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'div',
+									{ className: 'row align-items-center', style: { paddingTop: "15px" } },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'input-group' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
+												getItemValue: this.getItemValue,
+												items: this.state.autocompleteData,
+												renderItem: this.renderItem,
+												value: this.state.query,
+												onChange: this.onChange,
+												onSelect: this.onSelect,
+												menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
+												inputProps: { className: "form-control", placeholder: "Search..." }
+											}),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'div',
+												{ className: 'input-group-append' },
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'button',
+													{ className: 'btn btn-primary', onClick: this.GetSearchResults },
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-magnifying-glass' })
+												)
+											)
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ className: 'btn pull-right btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown' },
+											'Filter'
+										),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'ul',
+											{ className: 'dropdown-menu' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'myInput', placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
+										)
+									)
+								)
 							),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
@@ -63228,28 +63660,6 @@ var ProductsList = function (_Component) {
 												'Special Price ',
 												this.state.name === 'special_price' ? this.state.arrow : ''
 											)
-										),
-										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-											'tr',
-											null,
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
-											),
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												' ',
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
-													getItemValue: this.getItemValue,
-													items: this.state.autocompleteData,
-													renderItem: this.renderItem,
-													value: this.state.products,
-													onChange: this.onChange,
-													onSelect: this.onSelect
-												})
-											)
 										)
 									),
 									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -63289,8 +63699,8 @@ var ProductsList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/pproducts/' + product.id, className: 'btn btn-info btn-sm' },
-														'Edit'
+														{ to: '/pproducts/' + product.id, className: 'btn btn-info btn-sm', title: 'Edit' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-wrench' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -63298,8 +63708,8 @@ var ProductsList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'div',
-														{ className: 'btn btn-danger btn-sm', onClick: _this5.deleteUser.bind(_this5, product) },
-														'Delete'
+														{ className: 'btn btn-danger btn-sm', title: 'Delete', onClick: _this6.deleteUser.bind(_this6, product) },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-trash' })
 													)
 												)
 											);
@@ -63844,6 +64254,8 @@ var ProductsEdit = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_router_dom__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -63866,11 +64278,28 @@ var ProductsPrice = function (_Component) {
 
 		_this.state = {
 			customers: [],
-			input: ''
+			input: '',
+			page: 0,
+			query: '',
+			autocompleteData: [],
+			height: window.innerHeight
 		};
 		_this.handleChange = _this.handleChange.bind(_this);
+
+		_this.handleScroll = _this.handleScroll.bind(_this);
+		_this.GetSearchResults = _this.GetSearchResults.bind(_this);
+		_this.handleChangeSearch = _this.handleChangeSearch.bind(_this);
+
+		_this.onChange = _this.onChange.bind(_this);
+		_this.onSelect = _this.onSelect.bind(_this);
+		_this.getItemValue = _this.getItemValue.bind(_this);
+		_this.renderItem = _this.renderItem.bind(_this);
+		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
 		return _this;
 	}
+
+	//	Lazy Load
+	//------------------
 
 	_createClass(ProductsPrice, [{
 		key: 'componentDidMount',
@@ -63882,7 +64311,120 @@ var ProductsPrice = function (_Component) {
 					customers: response.data
 				});
 			});
+			window.addEventListener("scroll", this.handleScroll);
 		}
+	}, {
+		key: 'handleScroll',
+		value: function handleScroll() {
+			var _this3 = this;
+
+			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+			var body = document.body;
+			var html = document.documentElement;
+			var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var windowBottom = windowHeight + window.pageYOffset + 10;
+
+			if (windowBottom >= docHeight) {
+
+				this.state.page += 25;
+				__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/customers?page=' + this.state.page).then(function (response) {
+
+					_this3.setState({
+						customers: [].concat(_toConsumableArray(_this3.state.customers), _toConsumableArray(response.data))
+					});
+				});
+			}
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			window.removeEventListener("scroll", this.handleScroll);
+		}
+
+		//--------------------
+
+		// Search
+		//----------------------------------------------------
+
+	}, {
+		key: 'handleChangeSearch',
+		value: function handleChangeSearch(event) {
+			this.setState({
+				query: event.target.value
+			});
+		}
+	}, {
+		key: 'GetSearchResults',
+		value: function GetSearchResults() {
+			var _this4 = this;
+
+			var str = this.state.query;
+			var res = str.replace("+", "%2B");
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/customers/search?q=' + res).then(function (response) {
+
+				_this4.setState({
+					customers: response.data
+
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'retrieveDataAsynchronously',
+		value: function retrieveDataAsynchronously(searchText) {
+			var _this5 = this;
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/customers/search?q=' + searchText).then(function (response) {
+
+				_this5.setState({
+
+					autocompleteData: response.data
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'onChange',
+		value: function onChange(e) {
+			this.setState({
+				query: e.target.value
+
+			});
+
+			this.retrieveDataAsynchronously(e.target.value);
+		}
+	}, {
+		key: 'onSelect',
+		value: function onSelect(val) {
+
+			this.setState({
+				query: val
+			});
+		}
+	}, {
+		key: 'renderItem',
+		value: function renderItem(item, isHighlighted) {
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				{ style: { background: isHighlighted ? 'lightgray' : 'white' } },
+				item.last_name
+			);
+		}
+	}, {
+		key: 'getItemValue',
+		value: function getItemValue(item) {
+
+			return '' + item.last_name;
+		}
+
+		//Autocomplete
+		//----------------------------------------------
+
 	}, {
 		key: 'deleteUser',
 		value: function deleteUser(customer) {
@@ -63964,7 +64506,7 @@ var ProductsPrice = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this6 = this;
 
 			var customers = this.state.customers;
 
@@ -63987,19 +64529,19 @@ var ProductsPrice = function (_Component) {
 					word.phone = '';
 				}
 
-				if (word.first_name.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.first_name.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.last_name.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.last_name.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.email.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.email.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.address.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.address.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.phone.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.phone.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
 			});
@@ -64028,7 +64570,56 @@ var ProductsPrice = function (_Component) {
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
 								{ to: 'create', className: 'btn btn-primary' },
-								'Add Product'
+								'Add Customer'
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
+								{ className: 'container' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'div',
+									{ className: 'row align-items-center', style: { paddingTop: "15px" } },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'input-group' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
+												getItemValue: this.getItemValue,
+												items: this.state.autocompleteData,
+												renderItem: this.renderItem,
+												value: this.state.query,
+												onChange: this.onChange,
+												onSelect: this.onSelect,
+												menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
+												inputProps: { className: "form-control", placeholder: "Search..." }
+											}),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'div',
+												{ className: 'input-group-append' },
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'button',
+													{ className: 'btn btn-primary', onClick: this.GetSearchResults },
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-magnifying-glass' })
+												)
+											)
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ className: 'btn pull-right btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown' },
+											'Filter'
+										),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'ul',
+											{ className: 'dropdown-menu' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'myInput', placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
+										)
+									)
+								)
 							),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
@@ -64071,11 +64662,6 @@ var ProductsPrice = function (_Component) {
 												{ onClick: this.sortBy.bind(this, 'phone') },
 												'Phone ',
 												this.state.name === 'phone' ? this.state.arrow : ''
-											),
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
 											)
 										)
 									),
@@ -64117,8 +64703,8 @@ var ProductsPrice = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/ccustomers/' + customer.id, className: 'btn btn-info btn-sm' },
-														'Edit'
+														{ to: '/ccustomers/' + customer.id, className: 'btn btn-info btn-sm', title: 'Edit' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-wrench' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -64126,8 +64712,8 @@ var ProductsPrice = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'div',
-														{ className: 'btn btn-danger btn-sm', onClick: _this3.deleteUser.bind(_this3, customer) },
-														'Delete'
+														{ className: 'btn btn-danger btn-sm', title: 'Delete', onClick: _this6.deleteUser.bind(_this6, customer) },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-trash' })
 													)
 												)
 											);
@@ -64672,6 +65258,8 @@ var ProductsEdit = function (_Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_react_router_dom__ = __webpack_require__(9);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -64695,12 +65283,28 @@ var OrderItemsList = function (_Component) {
 		_this.state = {
 			orderItems: [],
 			orderName: '',
-			input: ''
+			input: '',
+			page: 0,
+			query: '',
+			autocompleteData: [],
+			height: window.innerHeight
 		};
 		_this.handleChange = _this.handleChange.bind(_this);
 
+		_this.handleScroll = _this.handleScroll.bind(_this);
+		_this.GetSearchResults = _this.GetSearchResults.bind(_this);
+		_this.handleChangeSearch = _this.handleChangeSearch.bind(_this);
+
+		_this.onChange = _this.onChange.bind(_this);
+		_this.onSelect = _this.onSelect.bind(_this);
+		_this.getItemValue = _this.getItemValue.bind(_this);
+		_this.renderItem = _this.renderItem.bind(_this);
+		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
 		return _this;
 	}
+
+	//	Lazy Load
+	//------------------
 
 	_createClass(OrderItemsList, [{
 		key: 'componentDidMount',
@@ -64708,15 +65312,135 @@ var OrderItemsList = function (_Component) {
 			var _this2 = this;
 
 			var orderItemId = this.props.match.params.id;
-
 			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/order/' + orderItemId + '/items').then(function (response) {
+
 				_this2.setState({
-					orderItems: response.data.items,
-					orderName: response.data.order.order_no
+					orderItems: response.data,
+					orderName: response.data.order_no
+
 				});
-				//console.log(response.data);
+			});
+			window.addEventListener("scroll", this.handleScroll);
+		}
+	}, {
+		key: 'handleScroll',
+		value: function handleScroll() {
+			var _this3 = this;
+
+			var orderItemId = this.props.match.params.id;
+
+			var windowHeight = "innerHeight" in window ? window.innerHeight : document.documentElement.offsetHeight;
+			var body = document.body;
+			var html = document.documentElement;
+			var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+			var windowBottom = windowHeight + window.pageYOffset + 10;
+
+			if (windowBottom >= docHeight) {
+
+				this.state.page += 25;
+				__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/order/' + orderItemId + '/items?page=' + this.state.page).then(function (response) {
+
+					_this3.setState({
+						orderItems: [].concat(_toConsumableArray(_this3.state.orderItems), _toConsumableArray(response.data))
+					});
+				});
+			}
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {
+			window.removeEventListener("scroll", this.handleScroll);
+		}
+
+		//--------------------
+
+		// Search
+		//----------------------------------------------------
+
+	}, {
+		key: 'handleChangeSearch',
+		value: function handleChangeSearch(event) {
+			this.setState({
+				query: event.target.value
 			});
 		}
+	}, {
+		key: 'GetSearchResults',
+		value: function GetSearchResults() {
+			var _this4 = this;
+
+			var orderItemId = this.props.match.params.id;
+
+			var str = this.state.query;
+			var res = str.replace("+", "%2B");
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/order/' + orderItemId + '/search?q=' + res).then(function (response) {
+
+				_this4.setState({
+					orderItems: response.data
+
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'retrieveDataAsynchronously',
+		value: function retrieveDataAsynchronously(searchText) {
+			var _this5 = this;
+
+			var orderItemId = this.props.match.params.id;
+
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/order/' + orderItemId + '/search?q=' + searchText).then(function (response) {
+
+				_this5.setState({
+
+					autocompleteData: response.data
+				});
+			}).catch(function (errors) {
+
+				console.log(errors);
+			});
+		}
+	}, {
+		key: 'onChange',
+		value: function onChange(e) {
+			this.setState({
+				query: e.target.value
+
+			});
+
+			this.retrieveDataAsynchronously(e.target.value);
+		}
+	}, {
+		key: 'onSelect',
+		value: function onSelect(val) {
+
+			this.setState({
+				query: val
+			});
+		}
+	}, {
+		key: 'renderItem',
+		value: function renderItem(item, isHighlighted) {
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				{ key: item.id, style: { background: isHighlighted ? 'lightgray' : 'white' } },
+				item.sku
+			);
+		}
+	}, {
+		key: 'getItemValue',
+		value: function getItemValue(item) {
+
+			return '' + item.sku;
+		}
+
+		//Autocomplete
+		//----------------------------------------------
+
+
 	}, {
 		key: 'deleteUser',
 		value: function deleteUser(order) {
@@ -64814,7 +65538,7 @@ var OrderItemsList = function (_Component) {
 	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this6 = this;
 
 			var orderItems = this.state.orderItems;
 			var orderName = this.state.orderName;
@@ -64857,37 +65581,37 @@ var OrderItemsList = function (_Component) {
 					word.customer_status = '';
 				}
 
-				if (word.order_id.toString().indexOf(_this3.state.input) !== -1) {
+				if (word.order_id.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
-				if (word.sku.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.sku.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.product_title.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.product_title.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.contact_info.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.contact_info.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.price.toString().indexOf(_this3.state.input) !== -1) {
+				if (word.price.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
-				if (word.qty.toString().indexOf(_this3.state.input) !== -1) {
+				if (word.qty.toString().indexOf(_this6.state.input) !== -1) {
 					return true;
 				}
-				if (word.deadline.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.deadline.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.leadtime.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.leadtime.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.item_status.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.item_status.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.notified.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.notified.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
-				if (word.customer_status.toLowerCase().indexOf(_this3.state.input.toLowerCase()) !== -1) {
+				if (word.customer_status.toLowerCase().indexOf(_this6.state.input.toLowerCase()) !== -1) {
 					return true;
 				}
 			});
@@ -64918,6 +65642,55 @@ var OrderItemsList = function (_Component) {
 								__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
 								{ to: 'create', className: 'btn btn-primary' },
 								'Add Order Item'
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
+								{ className: 'container' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'div',
+									{ className: 'row align-items-center', style: { paddingTop: "15px" } },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'input-group' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3_react_autocomplete___default.a, {
+												getItemValue: this.getItemValue,
+												items: this.state.autocompleteData,
+												renderItem: this.renderItem,
+												value: this.state.query,
+												onChange: this.onChange,
+												onSelect: this.onSelect,
+												menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
+												inputProps: { className: "form-control", placeholder: "Search..." }
+											}),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'div',
+												{ className: 'input-group-append' },
+												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+													'button',
+													{ className: 'btn btn-primary', onClick: this.GetSearchResults },
+													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-magnifying-glass' })
+												)
+											)
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'col-md-auto align-self-end' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ className: 'btn pull-right btn-primary dropdown-toggle', type: 'button', 'data-toggle': 'dropdown' },
+											'Filter'
+										),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'ul',
+											{ className: 'dropdown-menu' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'myInput', placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
+										)
+									)
+								)
 							),
 							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
@@ -65002,11 +65775,6 @@ var OrderItemsList = function (_Component) {
 												{ onClick: this.sortBy.bind(this, 'customer_status') },
 												'Customer Status ',
 												this.state.name === 'customer_status' ? this.state.arrow : ''
-											),
-											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'th',
-												null,
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { placeholder: 'Filter...', value: this.state.input, onChange: this.handleChange })
 											)
 										)
 									),
@@ -65083,8 +65851,8 @@ var OrderItemsList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														__WEBPACK_IMPORTED_MODULE_4_react_router_dom__["b" /* Link */],
-														{ to: '/oorder/' + orderItem.order_id + '/items/' + orderItem.id, className: 'btn btn-info btn-sm' },
-														'Edit'
+														{ to: '/oorder/' + orderItem.order_id + '/items/' + orderItem.id, className: 'btn btn-info btn-sm', title: 'Edit' },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-wrench' })
 													)
 												),
 												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -65092,8 +65860,8 @@ var OrderItemsList = function (_Component) {
 													null,
 													__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 														'div',
-														{ className: 'btn btn-danger btn-sm', onClick: _this3.deleteUser.bind(_this3, orderItem) },
-														'Delete'
+														{ className: 'btn btn-danger btn-sm', title: 'Delete', onClick: _this6.deleteUser.bind(_this6, orderItem) },
+														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'oi oi-trash' })
 													)
 												)
 											);
@@ -65447,8 +66215,8 @@ var OrderItemsCreate = function (_Component) {
 																																																				onChange: this.onChange,
 																																																				onSelect: this.onSelect,
 																																																				menuStyle: { zIndex: '1' },
-																																																				inputProps: { name: "sku", className: "form-control" },
-																																																				wrapperStyle: {}
+																																																				inputProps: { name: "sku", className: "form-control" }
+
 																																																})
 																																												)
 																																								)
@@ -66458,7 +67226,7 @@ var Header = function (_Component) {
 
       return __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(
         'nav',
-        { className: 'navbar navbar-expand-md navbar-light navbar-laravel' },
+        { className: 'navbar navbar-expand-md navbar-light navbar-laravel fixed-top' },
         __WEBPACK_IMPORTED_MODULE_2_react___default.a.createElement(
           'div',
           { className: 'container' },

@@ -13,9 +13,9 @@ class CustomerController extends Controller
    	}
 
 
-   	public function index() {
+   	public function index(Request $request) {
 
-   		$customers = Customer::all();
+   		$customers = Customer::limit(25)->skip($request->page)->get();
    		return $customers->toJson();
    	}
 
@@ -60,5 +60,14 @@ class CustomerController extends Controller
 
    		return response()->json('Customer deleted');
    	}
+
+       public function getReactSearch(Request $request)
+    {
+
+        $customer = Customer::where('last_name', 'like', '%'.request()->q.'%')
+        ->orWhere('first_name', 'like', '%'.request()->q . '%')->limit(30)->get();
+
+        return $customer->toJson();
+    }
 
 }
