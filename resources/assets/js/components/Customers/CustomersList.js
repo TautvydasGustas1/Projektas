@@ -297,16 +297,15 @@ render() {
 		});
 
 	return(
-<div className="container">
+<div className="container" style={{minWidth: "700px"}}>
     <div className="row justify-content-center">
-        <div className="col-md-20">
             <div className="card">
                 <div className="card-header"><h1 align="center">Customers</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Customer</Link>
 
                 <div className="container">
                 <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto align-self-end">
+                	<div className="col-md-auto" style={{width: "50%"}}>
                 		
                 		<div className="input-group">
 							 <Autocomplete  
@@ -320,12 +319,12 @@ render() {
 			                    inputProps={{className: "form-control", placeholder: "Search..."}}
 			             	  />
 			             	 	 <div className="input-group-append">
-							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span class="oi oi-magnifying-glass"></span></button>
+							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span className="oi oi-magnifying-glass"></span></button>
 			             	  	</div>
 			            </div>
 
                 	</div>
-                		<div className="col-md-auto align-self-end">
+                		<div className="col-md-auto" style={{width: "50%"}}>
                 		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
    						  <ul className="dropdown-menu">
 			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
@@ -338,7 +337,7 @@ render() {
 
                 <div className="card-body">
                  	
-					<table className="table"> 
+					<table className="table table-sm"> 
 						<thead>
 						<tr>
 							<th onClick={this.sortBy.bind(this, 'first_name')}>First Name {this.state.name === 'first_name' ? this.state.arrow : ''}</th>
@@ -360,8 +359,8 @@ render() {
 								<td>{customer.address}</td>
 								<td>{customer.phone}</td>
 								<td></td>
-								<td><Link to={`/ccustomers/${customer.id}`} className='btn btn-info btn-sm' title="Edit"><span class="oi oi-wrench"></span></Link></td>
-								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, customer)}><span class="oi oi-trash"></span></div></td>
+								<td><Link to={`/ccustomers/${customer.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
+								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, customer)}><span className="oi oi-trash"></span></div></td>
 								</tr>
 								))}
 									
@@ -373,7 +372,6 @@ render() {
             </div>
         </div>
     </div>
-</div>
 	);
 }
 }

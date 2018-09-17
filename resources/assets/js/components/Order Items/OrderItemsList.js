@@ -38,10 +38,9 @@ constructor () {
   componentDidMount () {
   	const orderItemId = this.props.match.params.id
     axios.get(`/order/${orderItemId}/items`).then(response => {
-    	
       this.setState({
-        orderItems: response.data,
-        orderName: response.data.order_no
+        orderItems: response.data['order_item'],
+		orderName: response.data['order_no'][0].order_no
         
       })
     })
@@ -76,7 +75,7 @@ constructor () {
 
   //--------------------
 
-  	// Search
+  // Search
   //----------------------------------------------------
   handleChangeSearch(event) {
 		this.setState({
@@ -216,12 +215,26 @@ retrieveDataAsynchronously(searchText){
 				{
 					entry.leadtime = ''
 				}
+				if(entry.item_status === null)
+				{
+					entry.item_status = ''
+				}
+				if(entry.notified === null)
+				{
+					entry.notified = ''
+				}
+				if(entry.customer_status === null)
+				{
+					entry.customer_status = ''
+				}
+
+
 		});
 
 		this.state.orderItems =  this.state.orderItems.sort(function(a, b) {
 
 
-	if(key === 'sku' || key === 'product_title' || key === 'customer_title' || key === 'contact_info' || key === 'deadline' || key === 'leadtime')
+	if(key === 'sku' || key === 'product_title' || key === 'customer_title' || key === 'contact_info' || key === 'deadline' || key === 'leadtime' || key === 'item_status' || key === 'notified' || key === 'customer_status')
 	{
 		  var nameA = a[key].toString().toUpperCase(); 
 		  var nameB = b[key].toString().toUpperCase();
@@ -285,12 +298,11 @@ render() {
 	const { orderName } = this.state
 	const orderItemId = this.props.match.params.id
 
+
+
 	let FilteredList = orderItems.filter(word => {
 
-				if(word.order_id === null)
-				{
-					word.order_id = ''
-				}
+			
 				if(word.sku === null)
 				{
 					word.sku = ''
@@ -331,11 +343,71 @@ render() {
 				{
 					word.customer_status = ''
 				}
+				if(word.item_status === "0")
+				{
+					word.item_status = "N"
+				}
+				else if(word.item_status === "1")
+				{
+					word.item_status = "R"
+				}
+				else if(word.item_status === "2")
+				{
+					word.item_status = "C"
+				}
+				else if(word.item_status === "3")
+				{
+					word.item_status = "Dec"
+				}
+				else if(word.item_status === "4")
+				{
+					word.item_status = "U"
+				}
+				else if(word.item_status === "5")
+				{
+					word.item_status = "Del"
+				}
+				if(word.notified === "0")
+				{
+					word.notified = "SN"
+				}
+				else if(word.notified === "1")
+				{
+					word.notified = "SNN"
+				}
+				else if(word.notified === "2")
+				{
+					word.notified = "ANN"
+				}
+				else if(word.notified === "3")
+				{
+					word.notified = "AN"
+				}
+				if(word.customer_status === "0")
+				{
+					word.customer_status = "R"
+				}
+				else if(word.customer_status === "1")
+				{
+					word.customer_status = "P"
+				}
+				else if(word.customer_status === "2")
+				{
+					word.customer_status = "N"
+				}
+				else if(word.customer_status === "3")
+				{
+					word.customer_status = "CR"
+				}
+				else if(word.customer_status === "4")
+				{
+					word.customer_status = "CC"
+				}
 
-			if(word.order_id.toString().indexOf(this.state.input) !== -1)
-			{
-				return true;
-			}
+
+				
+
+			
 			if(word.sku.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
 			{
 				return true;
@@ -383,16 +455,15 @@ render() {
 
 
 	return(
-<div className="container">
+<div className="container" style={{minWidth: "1200px"}}>
     <div className="row justify-content-center">
-        <div className="col-md-20">
             <div className="card">
                 <div className="card-header"><h1 align="center">Orders for {orderName}</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Order Item</Link>
 
-                <div className="container">
+                <div className="container" style={{margin: "0px"}}>
                 <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto align-self-end">
+                	<div className="col-md-auto" style={{width: "25%"}}>
                 		
                 		<div className="input-group">
 							 <Autocomplete  
@@ -406,12 +477,12 @@ render() {
 			                    inputProps={{className: "form-control", placeholder: "Search..."}}
 			             	  />
 			             	 	 <div className="input-group-append">
-							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span class="oi oi-magnifying-glass"></span></button>
+							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span className="oi oi-magnifying-glass"></span></button>
 			             	  	</div>
 			            </div>
 
                 	</div>
-                		<div className="col-md-auto align-self-end">
+                		<div className="col-md-auto" style={{width: "50%"}}>
                 		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
    						  <ul className="dropdown-menu">
 			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
@@ -423,10 +494,10 @@ render() {
                
                 <div className="card-body">
                  	
-					<table className="table"> 
+					<table className="table table-sm"> 
 						<thead>
 						<tr>
-							<th onClick={this.sortBy.bind(this, 'order_id')}>Order ID {this.state.name === 'order_id' ? this.state.arrow : ''}</th>
+							
 							<th onClick={this.sortBy.bind(this, 'sku')}>Sku {this.state.name === 'sku' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'product_title')}>Product Title {this.state.name === 'product_title' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'customer_title')}>Customer Title {this.state.name === 'customer_title' ? this.state.arrow : ''}</th>
@@ -444,10 +515,9 @@ render() {
 							
 						</thead>
 			<tbody>
-				
+							
 							{FilteredList.map(orderItem =>(
 								<tr key={orderItem.id}> 
-								<td>{orderItem.order_id}</td>
 								<td>{orderItem.sku}</td>
 								<td>{orderItem.product_title}</td>
 								<td>{orderItem.customer_title}</td>
@@ -456,12 +526,11 @@ render() {
 								<td>{orderItem.qty}</td>
 								<td>{orderItem.deadline}</td>
 								<td>{orderItem.leadtime}</td>
-								<td>{orderItem.item_status}</td>
-								<td>{orderItem.notified}</td>
-								<td>{orderItem.customer_status}</td>
-								<td></td>
-								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm' title="Edit"><span class="oi oi-wrench"></span></Link></td>
-								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, orderItem)}><span class="oi oi-trash"></span></div></td>
+								<td className={orderItem.item_status==="N" ? "text-primary" : orderItem.item_status==="R" ? "text-info" : orderItem.item_status==="C" ? "text-secondary" : orderItem.item_status==="Dec" ? "text-danger" : orderItem.item_status==="U" ? "text-dark" : "text-success"}><b>{orderItem.item_status}</b></td>				
+								<td className={orderItem.notified === "SN" ? "text-primary" : orderItem.notified === "SNN" ? "text-secondary" : orderItem.notified === "ANN" ? "text-warning" : "text-success"}><b>{orderItem.notified}</b></td>
+								<td className={orderItem.customer_status === "R" ? "text-primary" : orderItem.customer_status === "P" ? "text-secondary" : orderItem.customer_status === "N" ? "text-warning" : orderItem.customer_status === "CR" ? "text-danger" : "text-success"}><b>{orderItem.customer_status}</b></td>
+								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
+								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, orderItem)}><span className="oi oi-trash"></span></div></td>
 								</tr>
 								))}					
 			</tbody>
@@ -471,7 +540,6 @@ render() {
             </div>
         </div>
     </div>
-</div>
 	);
 }
 }

@@ -260,8 +260,9 @@ render() {
                     value={this.state.sku}
                     onChange={this.onChange}
                     onSelect={this.onSelect}
-                    menuStyle={{ zIndex: '1' }}
+			        menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
                     inputProps={{name: "sku", className: "form-control"}}
+                    wrapperStyle={{}}
                     
              	  />
             	</div>
@@ -291,7 +292,7 @@ render() {
                     value={this.state.customer_title}
                     onChange={this.onChangeCust}
                     onSelect={this.onSelectCust}
-                    menuStyle={{ zIndex: '1' }}
+                    menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
                     wrapperStyle={{}}
                     inputProps={{name: "customer_title", className: `form-control ${this.hasErrorFor('customer_title') ? 'is-invalid' : ''}`}}
              	  />

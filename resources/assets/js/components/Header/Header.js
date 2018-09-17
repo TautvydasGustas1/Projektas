@@ -51,7 +51,7 @@ return(
     <div className='container'>
       <Link className='navbar-brand' to='/'>Project</Link>
       <div align="right">
-      <Link to={'#'} className='btn btn-success' onClick={this.handleClick}>+</Link>
+      <Link to={'#'} className='btn btn-success' onClick={this.handleClick}><span className="oi oi-plus"></span></Link>
       <Link to={`/ccustomers/list`} className='btn btn-secondary'>Customers</Link>
       <Link to={`/pproducts/list`} className='btn btn-secondary'>Products</Link>
       <Link to={`/ssuppliers/list`} className='btn btn-secondary'>Suppliers</Link>

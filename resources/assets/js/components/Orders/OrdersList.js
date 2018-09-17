@@ -19,6 +19,7 @@ constructor () {
       page: 0,
       query: '',
       autocompleteData: [],
+      Status: [],
       height: window.innerHeight
     }
  this.handleChange = this.handleChange.bind(this);
@@ -250,7 +251,20 @@ render() {
 				if(word.supplier === null)
 				{
 					word.supplier = ''
-				}	
+				}
+				if(word.status == "0")
+				{
+					word.status = "N"
+
+				}
+				else if(word.status == "1")
+				{
+					word.status = "S"
+				}
+				else if(word.status == "2")
+				{
+					word.status = "C"
+				}
 
 			if(word.order_no.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
 			{
@@ -267,19 +281,19 @@ render() {
 
 		});
 
-
+ 
 
 	return(
-<div className="container">
+<div className="container" style={{minWidth: '500px'}}>
     <div className="row justify-content-center">
-        <div className="col-md-20">
+        
             <div className="card">
                 <div className="card-header"><h1 align="center">Orders</h1></div>
                 <Link to={'create'} className="btn btn-primary">Add Order</Link>
 
                 <div className="container">
                 <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto align-self-end">
+                	<div className="col-md-auto" style={{width: "60%"}}>
                 		
                 		<div className="input-group">
 							 <Autocomplete  
@@ -293,12 +307,12 @@ render() {
 			                    inputProps={{className: "form-control", placeholder: "Search..."}}
 			             	  />
 			             	 	 <div className="input-group-append">
-							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span class="oi oi-magnifying-glass"></span></button>
+							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span className="oi oi-magnifying-glass"></span></button>
 			             	  	</div>
 			            </div>
 
                 	</div>
-                		<div className="col-md-auto align-self-end">
+                		<div className="col-md-auto" style={{width: "30%"}}>
                 		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
    						  <ul className="dropdown-menu">
 			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
@@ -311,7 +325,7 @@ render() {
 
                 <div className="card-body">
                  	
-					<table className="table"> 
+					<table className="table table-sm"> 
 						<thead>
 						<tr>
 							<th onClick={this.sortBy.bind(this, 'order_no')}>Order No {this.state.name === 'order_no' ? this.state.arrow : ''}</th>
@@ -325,13 +339,12 @@ render() {
 							{FilteredList.map(order =>(
 								<tr key={order.id}> 
 								<td>{order.order_no}</td>
-								<td>{order.status}</td>
+								<td className={order.status === "N" ? "text-primary" : order.status === "S" ? "text-warning" : "text-success"}><b>{order.status}</b></td>
 								<td>{order.supplier}</td>
-								<td></td>
-								<td><Link to={`/oorders/${order.id}`} className='btn btn-info btn-sm' title="Edit"><span class="oi oi-wrench"></span></Link></td>
-								<td><Link to={`/oorder/${order.id}/create`} className='btn btn-success btn-sm' title="Add Items"><span class="oi oi-plus"></span></Link></td>
-								<td><Link to={`/oorder/${order.id}/items`} className='btn btn-primary btn-sm' title="Show List"><span class="oi oi-list"></span></Link></td>
-								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, order)}><span class="oi oi-trash"></span></div></td>
+								<td><Link to={`/oorders/${order.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
+								<td><Link to={`/oorder/${order.id}/create`} className='btn btn-success btn-sm' title="Add Items"><span className="oi oi-plus"></span></Link></td>
+								<td><Link to={`/oorder/${order.id}/items`} className='btn btn-primary btn-sm' title="Show List"><span className="oi oi-list"></span></Link></td>
+								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, order)}><span className="oi oi-trash"></span></div></td>
 								</tr>
 								))}
 									
@@ -343,7 +356,7 @@ render() {
             </div>
         </div>
     </div>
-</div>
+
 	);
 }
 }
