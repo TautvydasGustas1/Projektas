@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -48,6 +49,15 @@ class LoginController extends Controller
             return false;
         }
     }
+    protected function authenticated(Request $request, $user)
+    {
 
-    
+        if (! $user->confirmed) {
+             \Session::flash('loginNotAuthenticated','Negalite prisijungti, kol nepatvirtino administratorius');
+
+            Auth::logout();
+
+            return redirect()->back();
+        }
+    }  
 }

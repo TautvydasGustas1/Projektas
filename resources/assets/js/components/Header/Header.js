@@ -14,6 +14,7 @@ constructor(props){
     
 	}
 		this.handleClick = this.handleClick.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
 }
 
 handleClick (e) {
@@ -46,6 +47,10 @@ handleClick (e) {
       })
     })
   }
+
+  handleLogout() {
+    window.location.pathname = `/logout`;
+  }
     
 render() {
 
@@ -67,6 +72,7 @@ return(
       </div>
       
       </div>
+      <Link title="Logout" onClick={this.handleLogout} className='btn btn-danger btn-sm' to={'#'}><i class="fas fa-sign-out-alt"></i></Link>
     </div>
   </nav>
   )
