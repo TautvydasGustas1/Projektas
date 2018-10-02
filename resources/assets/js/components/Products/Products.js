@@ -11,10 +11,11 @@ class Products extends Component {
 		this.state = {
 			sku: '',
 			title: '',
-			cost: '',
-			price: '',
-			special_price: '',
-			errors: []
+			cost: '0',
+			price: '0',
+			special_price: '0',
+			errors: [],
+
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -52,8 +53,6 @@ class Products extends Component {
 		event.preventDefault()
 		const { history } = this.props
 
-
-
 		const product = {
 			sku: this.state.sku,
 			title: this.state.title,
@@ -64,7 +63,10 @@ class Products extends Component {
 
 		axios.post('/products', product).then(response => {
 			//redirecting
-			history.push('/pproducts/list')
+			history.push({
+			  pathname: '/pproducts/list',
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({
@@ -75,8 +77,11 @@ class Products extends Component {
 	}
 
 render() {
+
+	
 	
 	return(
+
 
 		<div className="container">
    			 <div className="row justify-content-center">
@@ -87,6 +92,7 @@ render() {
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
 
+		          	             
 		        	<div className="row">
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	

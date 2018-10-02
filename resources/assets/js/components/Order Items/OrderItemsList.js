@@ -16,6 +16,7 @@ constructor () {
       page: 0,
       query: '',
       autocompleteData: [],
+      message: '',
       height: window.innerHeight
     }
     this.handleChange = this.handleChange.bind(this);
@@ -45,6 +46,7 @@ constructor () {
       })
     })
     window.addEventListener("scroll", this.handleScroll);
+    this.state.message = this.props.location.state;
   }
 
   handleScroll() {
@@ -106,7 +108,6 @@ constructor () {
 retrieveDataAsynchronously(searchText){
 	const orderItemId = this.props.match.params.id
        
-
         axios.get(`/order/${orderItemId}/search?q=`+searchText).then(response => {
  
          this.setState({
@@ -126,10 +127,7 @@ retrieveDataAsynchronously(searchText){
     onChange(e){
         this.setState({
             query: e.target.value
-           
         });
-            
-
         this.retrieveDataAsynchronously(e.target.value)
     }
 
@@ -139,7 +137,6 @@ retrieveDataAsynchronously(searchText){
         this.setState({
             query: val
         });
-      
     }
 
    
@@ -166,19 +163,24 @@ retrieveDataAsynchronously(searchText){
 	deleteUser(order) {
 	const orderItemId = this.props.match.params.id
 
-		//BackEnd delete
-		var $this = this
-		axios.delete(`/order/${orderItemId}/items/${order.id}/delete`).then(response => {
-		//FroontEnd delete
-		const newState = $this.state.orderItems.slice();
-		newState.splice(newState.indexOf(order), 1)
-		$this.setState({
-			orderItems: newState
-		})
+	var ask = window.confirm("Ar tikrai norite ištrinti įrašą?");
+	if(ask)
+	{		
+			//BackEnd delete
+			var $this = this
+			axios.delete(`/order/${orderItemId}/items/${order.id}/delete`).then(response => {
+			//FroontEnd delete
+			const newState = $this.state.orderItems.slice();
+			newState.splice(newState.indexOf(order), 1)
+			$this.setState({
+				orderItems: newState
+			})
 
-		}).catch(error => {
-			console.log(error)
-		})
+			}).catch(error => {
+				console.log(error)
+			})
+	}
+
 
 	}
 
@@ -451,21 +453,31 @@ render() {
 
 		});
 
+	// Alert 
+	if(this.state.message !== '' && this.state.message !== undefined)
+	{
+		var Alert = <div align='center' className="alert alert-success" role="alert">
+                				  {this.state.message.some}
+                				</div>
+	}
 
 
 
 	return(
-<div className="container" style={{minWidth: "1200px"}}>
-    <div className="row justify-content-center">
-            <div className="card">
+<div className="container">
+    <div className="row justify-content-center" style={{display: '-webkit-box'}}>
+            <div className="card" style={{minWidth: 'auto'}}>
                 <div className="card-header"><h1 align="center">Orders for {orderName}</h1></div>
+
+                {Alert}
+
                 <Link to={'create'} className="btn btn-primary">Add Order Item</Link>
 
-                <div className="container" style={{margin: "0px"}}>
-                <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto" style={{width: "25%"}}>
+                <div className="container" style={{margin: "0px", maxWidth: "520px"}}>
+                <div className="row" style={{paddingTop: "15px"}}> 
+                	<div className="col-md-auto" style={{width: "50%"}}>
                 		
-                		<div className="input-group">
+                		<div className="input-group" style={{flexWrap: 'inherit'}}>
 							 <Autocomplete  
 			                    getItemValue={this.getItemValue}
 			                    items={this.state.autocompleteData}
@@ -483,10 +495,7 @@ render() {
 
                 	</div>
                 		<div className="col-md-auto" style={{width: "50%"}}>
-                		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
-   						  <ul className="dropdown-menu">
-			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
-   						  </ul>
+			            		<input className = "form-control" style={{maxWidth: '184px'}} id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
                 		</div>
                 	
                 </div>
@@ -501,7 +510,9 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'sku')}>Sku {this.state.name === 'sku' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'product_title')}>Product Title {this.state.name === 'product_title' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'customer_title')}>Customer Title {this.state.name === 'customer_title' ? this.state.arrow : ''}</th>
-							<th onClick={this.sortBy.bind(this, 'contact_info')}>Contact Info {this.state.name === 'contact_info' ? this.state.arrow : ''}</th>
+							
+							<th onClick={this.sortBy.bind(this, 'contact_info')}><div className=".d-none .d-sm-block">Contact Info {this.state.name === 'contact_info' ? this.state.arrow : ''}</div></th>
+							
 							<th onClick={this.sortBy.bind(this, 'price')}>Price {this.state.name === 'price' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'qty')}>Quantity {this.state.name === 'qty' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'deadline')}>Deadline {this.state.name === 'deadline' ? this.state.arrow : ''}</th>
@@ -509,6 +520,8 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'item_status')}>Item Status {this.state.name === 'item_status' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'notified')}>Notified {this.state.name === 'notified' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'customer_status')}>Customer Status {this.state.name === 'customer_status' ? this.state.arrow : ''}</th>
+							<th></th>
+							<th></th>
 						</tr>
 
 				
@@ -526,9 +539,12 @@ render() {
 								<td>{orderItem.qty}</td>
 								<td>{orderItem.deadline}</td>
 								<td>{orderItem.leadtime}</td>
-								<td className={orderItem.item_status==="N" ? "text-primary" : orderItem.item_status==="R" ? "text-info" : orderItem.item_status==="C" ? "text-secondary" : orderItem.item_status==="Dec" ? "text-danger" : orderItem.item_status==="U" ? "text-dark" : "text-success"}><b>{orderItem.item_status}</b></td>				
-								<td className={orderItem.notified === "SN" ? "text-primary" : orderItem.notified === "SNN" ? "text-secondary" : orderItem.notified === "ANN" ? "text-warning" : "text-success"}><b>{orderItem.notified}</b></td>
-								<td className={orderItem.customer_status === "R" ? "text-primary" : orderItem.customer_status === "P" ? "text-secondary" : orderItem.customer_status === "N" ? "text-warning" : orderItem.customer_status === "CR" ? "text-danger" : "text-success"}><b>{orderItem.customer_status}</b></td>
+								<td className={orderItem.item_status==="N" ? "text-primary" : orderItem.item_status==="R" ? "text-info" : orderItem.item_status==="C" ? "text-secondary" : orderItem.item_status==="Dec" ? "text-danger" : orderItem.item_status==="U" ? "text-dark" : "text-success"}><b>
+								</b><span className="d-block d-sm-none">{orderItem.item_status}</span><span className="Full">{orderItem.item_status==="N" ? "Not Requested" : orderItem.item_status==="R" ? "Requested" : orderItem.item_status==="C" ? "Confirmed" : orderItem.item_status==="Dec" ? "Declined" : orderItem.item_status==="U" ? "Undecided" : orderItem.item_status==="D" ? "Delivered" : ""}</span></td>				
+								<td className={orderItem.notified === "SN" ? "text-primary" : orderItem.notified === "SNN" ? "text-secondary" : orderItem.notified === "ANN" ? "text-warning" : "text-success"}><b>
+								</b><span className="d-block d-sm-none">{orderItem.notified}</span><span className="Full">{orderItem.notified === "SN" ? "Customer notified about status" : orderItem.notified === "SNN" ? "Customer not notified about status" : orderItem.notified === "ANN" ? "Customer not notified about arrival" : orderItem.notified === "AN" ? "Customer notified about arrival" : ""}</span></td>
+								<td className={orderItem.customer_status === "R" ? "text-primary" : orderItem.customer_status === "P" ? "text-secondary" : orderItem.customer_status === "N" ? "text-warning" : orderItem.customer_status === "CR" ? "text-danger" : "text-success"}><b>	
+								</b><span className="d-block d-sm-none">{orderItem.customer_status}</span><span className="Full">{orderItem.customer_status === "R" ? "Request" : orderItem.customer_status === "P" ? "Price offer" : orderItem.customer_status === "N" ? "Negotiation" : orderItem.customer_status === "CR" ? "Closed refused" : orderItem.customer_status === "CC" ? "Closed confirmed" : ""}</span></td>
 								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
 								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, orderItem)}><span className="oi oi-trash"></span></div></td>
 								</tr>

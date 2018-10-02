@@ -14,7 +14,8 @@ class Customers extends Component {
 			email: '',
 			address: '',
 			phone: '',
-			errors: []
+			errors: [],
+			message: ''
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -64,8 +65,10 @@ class Customers extends Component {
 
 		axios.post('/customers', customers).then(response => {
 			//redirecting
-			history.push('/ccustomers/list')
-
+			history.push({
+			  pathname: '/ccustomers/list',
+			  state: { some: response.data }
+			})
 		}).catch(error => {
 			this.setState({
 				errors: error.response.data.errors

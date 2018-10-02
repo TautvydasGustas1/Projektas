@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Order;
 use App\Customer;
 use App\Product;
+use Illuminate\Support\Facades\Auth;
+
 
 class OrderItemsController extends Controller
 {
@@ -45,10 +47,12 @@ class OrderItemsController extends Controller
             'price' => 'numeric',
             'qty' => 'numeric'
         ]);
+
+         $UserID = Auth::id();
         
-        $order_items = Order_Items::create(request()->all());
+        $order_items = Order_Items::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
         
-        return response()->json('Saved!');
+         return response()->json('Sekmingai pridėtas naujas įrašas!');
     }
 
     
@@ -69,11 +73,13 @@ class OrderItemsController extends Controller
             'price' => 'numeric',
             'qty' => 'numeric'
         ]);
-
+         $UserID = Auth::id();
+         
         $order_items = $id;
-        $order_items->update($request->all());
+        
+        $order_items->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
-        return response()->json('Succesfully updated!');
+        return response()->json('Sekmingai pataisytas įrašas');
     }
 
     public function delete(Order $order, $id) {
@@ -101,16 +107,17 @@ class OrderItemsController extends Controller
         $id = Order_Items::latest()->get()->first();
 
 
-        return $id->toJson();
+        return json_encode($id);
     }
 
-    public function getReactSearch(Request $request)
+    public function getReactSearch(Request $request, $id)
     {
+       // $order_items = Order_Items::where('order_id', $id)->get();
 
-        $order_items = Order_Items::where('sku', 'like', '%'.request()->q.'%')
-        ->orWhere('product_title', 'like', '%'.request()->q . '%')
-        ->orWhere('customer_title', 'like', '%'.request()->q . '%')
-        ->orWhere('contact_info', 'like', '%'.request()->q . '%')->limit(30)->get();
+        $order_items = Order_Items::where('sku', 'like', '%'.request()->q.'%')->where('order_id', $id)
+        ->orWhere('product_title', 'like', '%'.request()->q . '%')->where('order_id', $id)
+        ->orWhere('customer_title', 'like', '%'.request()->q . '%')->where('order_id', $id)
+        ->orWhere('contact_info', 'like', '%'.request()->q . '%')->where('order_id', $id)->limit(30)->get();
 
         return $order_items->toJson();
     }

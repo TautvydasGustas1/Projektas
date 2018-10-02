@@ -13,12 +13,18 @@ class Supplier extends Model
     	'address',
     	'contact',
     	'email',
-    	'phone'
+    	'phone',
+        'modified_UserID'
 
     ];
 
     public function GiveSupplierID() {
   
     	return $this->hasMany(Order::class); 
+    }
+
+    public function GetContactID() {
+
+        return $this->belongsTo(Contact::class); 
     }
 }

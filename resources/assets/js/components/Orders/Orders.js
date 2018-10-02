@@ -14,7 +14,8 @@ class Orders extends Component {
 			supplier: '',
 			message: '',
 			autocompleteData: [],
-			errors: []
+			errors: [],
+			userID: ''
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -89,6 +90,15 @@ retrieveDataAsynchronously(searchText){
 //----------------------------------------------
 				//Form
 
+	/*componentDidMount () {
+
+    axios.get(`/orders/create`).then(response => {
+      this.setState({
+        userID: response.data.userID
+      })
+    })
+  }*/
+
 	hasErrorFor (field) {
     return !!this.state.errors[field]
   }
@@ -113,19 +123,21 @@ retrieveDataAsynchronously(searchText){
 	handleSubmit (event) {
 		event.preventDefault()
 		const { history } = this.props
-
-
 		
 
 		const order = {
 			order_no: this.state.order_no,
 			status: this.state.status,
 			supplier: this.state.supplier
+
 		}
 
 		axios.post('/orders', order).then(response => {
 			//redirecting
-			history.push('/oorders/list')
+			history.push({
+			  pathname: '/oorders/list',
+			  state: { some: response.data }
+			})
 
 
 		}).catch(error => {

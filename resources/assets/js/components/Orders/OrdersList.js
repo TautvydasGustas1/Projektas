@@ -20,6 +20,7 @@ constructor () {
       query: '',
       autocompleteData: [],
       Status: [],
+      message: '',
       height: window.innerHeight
     }
  this.handleChange = this.handleChange.bind(this);
@@ -47,6 +48,7 @@ constructor () {
       })
     })
     window.addEventListener("scroll", this.handleScroll);
+    this.state.message = this.props.location.state;
   }
 
   handleScroll() {
@@ -166,20 +168,23 @@ retrieveDataAsynchronously(searchText){
 //----------------------------------------------
 
 	deleteUser(order) {
+		var ask = window.confirm("Ar tikrai norite ištrinti įrašą?");
+		if(ask)
+		{
+			//BackEnd delete
+			var $this = this
+			axios.delete(`/orders/${order.id}/delete`).then(response => {
+			//FroontEnd delete
+			const newState = $this.state.orders.slice();
+			newState.splice(newState.indexOf(order), 1)
+			$this.setState({
+				orders: newState
+			})
 
-		//BackEnd delete
-		var $this = this
-		axios.delete(`/orders/${order.id}/delete`).then(response => {
-		//FroontEnd delete
-		const newState = $this.state.orders.slice();
-		newState.splice(newState.indexOf(order), 1)
-		$this.setState({
-			orders: newState
-		})
-
-		}).catch(error => {
-			console.log(error)
-		})
+			}).catch(error => {
+				console.log(error)
+			})		
+		}
 	}
 
 	sortBy(key) {
@@ -239,6 +244,7 @@ retrieveDataAsynchronously(searchText){
 		})
 	}
 
+
 render() {
 	const { orders } = this.state
 
@@ -278,24 +284,34 @@ render() {
 			{
 				return true;
 			}
-
 		});
 
- 
+	// Alert on Adding
+	if(this.state.message !== '' && this.state.message !== undefined)
+	{
+		var Alert = <div align='center' className="alert alert-success" role="alert">
+                				  {this.state.message.some}
+                				</div>
+	}
+
+
 
 	return(
-<div className="container" style={{minWidth: '500px'}}>
-    <div className="row justify-content-center">
+<div className="container">
+    <div className="row justify-content-center" style={{display: '-webkit-box'}}>
         
-            <div className="card">
+            <div className="card" style={{minWidth: 'auto'}}>
                 <div className="card-header"><h1 align="center">Orders</h1></div>
+
+                {Alert}
+
                 <Link to={'create'} className="btn btn-primary">Add Order</Link>
 
-                <div className="container">
-                <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto" style={{width: "60%"}}>
+                <div className="container" style={{margin: "0px", maxWidth: "520px"}}>
+                <div className="row" style={{paddingTop: "15px"}}> 
+                	<div className="col-md-auto" style={{width: "50%"}}>
                 		
-                		<div className="input-group">
+                		<div className="input-group" style={{flexWrap: 'inherit'}}>
 							 <Autocomplete  
 			                    getItemValue={this.getItemValue}
 			                    items={this.state.autocompleteData}
@@ -312,11 +328,8 @@ render() {
 			            </div>
 
                 	</div>
-                		<div className="col-md-auto" style={{width: "30%"}}>
-                		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
-   						  <ul className="dropdown-menu">
-			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
-   						  </ul>
+                		<div className="col-md-auto" style={{width: "50%"}}>
+			            		<input className = "form-control" style={{maxWidth: '184px'}} id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
                 		</div>
                 	
                 </div>
@@ -331,15 +344,18 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'order_no')}>Order No {this.state.name === 'order_no' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'status')}>Status {this.state.name === 'status' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'supplier')}>Supplier {this.state.name === 'supplier' ? this.state.arrow : ''}</th>
-						</tr>
-						
-														
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+						</tr>														
 						</thead>
 			<tbody>							
 							{FilteredList.map(order =>(
 								<tr key={order.id}> 
 								<td>{order.order_no}</td>
-								<td className={order.status === "N" ? "text-primary" : order.status === "S" ? "text-warning" : "text-success"}><b>{order.status}</b></td>
+								<td title={order.status === "N" ? "Not Sent" : order.status === "S" ? "Sent Current to Open" : "Closed"} className={order.status === "N" ? "text-primary" : order.status === "S" ? "text-warning" : "text-success"}>
+								<b><span className="d-block d-sm-none">{order.status}</span><span className="Full">{order.status === "N" ? "Not Sent" : order.status === "S" ? "Sent Current to Open" : order.status === "C" ? "Closed" : ""}</span></b></td>
 								<td>{order.supplier}</td>
 								<td><Link to={`/oorders/${order.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
 								<td><Link to={`/oorder/${order.id}/create`} className='btn btn-success btn-sm' title="Add Items"><span className="oi oi-plus"></span></Link></td>

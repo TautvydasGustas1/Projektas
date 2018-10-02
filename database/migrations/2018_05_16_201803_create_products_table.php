@@ -20,6 +20,7 @@ class CreateProductsTable extends Migration
             $table->float('cost')->nullable(true);
             $table->float('price')->nullable(true);
             $table->float('special_price')->nullable(true);
+            $table->string('modified_UserID');
             $table->timestamps();
         });
     }

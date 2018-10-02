@@ -12,7 +12,9 @@ class Product extends Model
     	'title',
     	'cost',
     	'price',
-    	'special_price'
+    	'special_price',
+        'modified_UserID'
+
     ];
 
     public function GiveProductSku() {

@@ -5,6 +5,8 @@ import Autocomplete from 'react-autocomplete';
 import { Link } from 'react-router-dom';
 
 
+
+
 class ProductsList extends Component {
 constructor () {
     super()
@@ -21,7 +23,9 @@ constructor () {
       page: 10,
       results: [],
       height: window.innerHeight,
-      autocompleteData: []
+      autocompleteData: [],
+      alert: false,
+
 
     }
 		  this.sortBy = this.sortBy.bind(this);
@@ -74,8 +78,7 @@ retrieveDataAsynchronously(searchText){
         this.setState({
             query: val
         });
-      
-
+     
     }
 
    
@@ -110,6 +113,7 @@ retrieveDataAsynchronously(searchText){
       })
     })
     window.addEventListener("scroll", this.handleScroll);
+    this.state.message = this.props.location.state;
   }
 
   handleScroll() {
@@ -141,24 +145,26 @@ retrieveDataAsynchronously(searchText){
 
 
 	deleteUser(product) {
+		var ask = window.confirm("Ar tikrai norite ištrinti įrašą?");
+		if(ask)
+		{		
+			//BackEnd delete
+			var $this = this
+			axios.delete(`/products/${product.id}/delete`).then(response => {
+			//FroontEnd delete
+			const newState = $this.state.products.slice();
+			newState.splice(newState.indexOf(product), 1)
+			$this.setState({
+				products: newState
+			})
 
-		//BackEnd delete
-		var $this = this
-		axios.delete(`/products/${product.id}/delete`).then(response => {
-		//FroontEnd delete
-		const newState = $this.state.products.slice();
-		newState.splice(newState.indexOf(product), 1)
-		$this.setState({
-			products: newState
-		})
-
-		}).catch(error => {
-			console.log(error)
-		})
+			}).catch(error => {
+				console.log(error)
+			})
+		}
 
 	}
 
-	
 	sortBy(key) {
 	var dir = this.state.direction;
 
@@ -300,18 +306,29 @@ render() {
 			}
 		});
 
+	// Alert 
+	if(this.state.message !== '' && this.state.message !== undefined)
+	{
+		var Alert = <div align='center' className="alert alert-success" role="alert">
+                				  {this.state.message.some}
+                				</div>
+	}
+
 	return(
-<div className="container" style={{minWidth: '1000px', minHeight: '1500px'}}>
-    <div className="row justify-content-center">
-            <div className="card">
+<div className="container">
+    <div className="row justify-content-center" style={{display: '-webkit-box'}}>
+            <div className="card" style={{minWidth: 'auto'}}>
                 <div className="card-header"><h1 align="center">Products</h1></div>
+
+                {Alert}
+
                 <Link to={'create'} className="btn btn-primary">Add Product</Link>
 
-                <div className="container" style={{margin: "0px"}}>
-                <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto" style={{width: "32%"}}>
+                <div className="container" style={{margin: "0px", maxWidth: "520px"}}>
+                <div className="row" style={{paddingTop: "15px"}}> 
+                	<div className="col-md-auto" style={{width: "50%"}}>
                 		
-                		<div className="input-group">
+                		<div className="input-group" style={{flexWrap: 'inherit'}}>
 							 <Autocomplete  
 			                    getItemValue={this.getItemValue}
 			                    items={this.state.autocompleteData}
@@ -328,11 +345,10 @@ render() {
 			            </div>
 
                 	</div>
+
+
                 		<div className="col-md-auto" style={{width: "50%"}}>
-                		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
-   						  <ul className="dropdown-menu">
-			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
-   						  </ul>
+			            		<input className = "form-control" style={{maxWidth: '184px'}} id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
                 		</div>
                 	
                 </div>
@@ -349,6 +365,8 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'cost')}>Cost {this.state.name === 'cost' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'price')}>Price {this.state.name === 'price' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'special_price')}>Special Price {this.state.name === 'special_price' ? this.state.arrow : ''}</th>
+							<th></th>
+							<th></th>
 							</tr>
 							
 						</thead>

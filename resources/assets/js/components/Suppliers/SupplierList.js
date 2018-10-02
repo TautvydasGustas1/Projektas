@@ -18,6 +18,7 @@ constructor () {
       input2: '',
       page: 0,
       query: '',
+      message: '',
       autocompleteData: [],
       height: window.innerHeight,
 
@@ -47,6 +48,7 @@ constructor () {
       })
     })
     window.addEventListener("scroll", this.handleScroll);
+    this.state.message = this.props.location.state;
   }
 
   handleScroll() {
@@ -165,22 +167,27 @@ retrieveDataAsynchronously(searchText){
 //----------------------------------------------
 
 
-	deleteUser(supplier) {
+	deleteUser(supplier) { 
+		
+		var ask = window.confirm("Ar tikrai norite ištrinti įrašą?");
+		if(ask)
+		{
+			//BackEnd delete
+			var $this = this
+			axios.delete(`/suppliers/${supplier.id}/delete`).then(response => {
+			//FroontEnd delete
+			const newState = $this.state.suppliers.slice();
+			newState.splice(newState.indexOf(supplier), 1)
+			$this.setState({
+				suppliers: newState
+			})
 
-		//BackEnd delete
-		var $this = this
-		axios.delete(`/suppliers/${supplier.id}/delete`).then(response => {
-		//FroontEnd delete
-		const newState = $this.state.suppliers.slice();
-		newState.splice(newState.indexOf(supplier), 1)
-		$this.setState({
-			suppliers: newState
-		})
-
-		}).catch(error => {
-			console.log(error)
-		})
-	}
+			}).catch(error => {
+				console.log(error)
+			})
+		}
+			
+		}
 
 	handleChange(event) {
 		this.setState({
@@ -291,19 +298,28 @@ render() {
 
 		});
 
-
+		// Alert 
+	if(this.state.message !== '' && this.state.message !== undefined)
+	{
+		var Alert = <div align='center' className="alert alert-success" role="alert">
+                				  {this.state.message.some}
+                				</div>
+	}
 
 	return(
-<div className="container" style={{width: '2000px', maxWidth: '1000px', minWidth: '1000px'}}>
-    <div className="row justify-content-center">
-            <div className="card">
+<div className="container">
+   <div className="row justify-content-center" style={{display: '-webkit-box'}}>
+            <div className="card" style={{minWidth: 'auto'}}>
                 <div className="card-header"><h1 align="center">Suppliers</h1></div>
+
+                {Alert}
+
                 <Link to={'create'} className="btn btn-primary">Add Supplier</Link>
-                <div className="container" style={{margin: '0px'}}>
-                <div className="row align-items-center" style={{paddingTop: "15px"}}> 
-                	<div className="col-md-auto" style={{width: "30%"}}>
+                <div className="container" style={{margin: "0px", maxWidth: "520px"}}>
+                <div className="row" style={{paddingTop: "15px"}}> 
+                	<div className="col-md-auto" style={{width: "50%"}}>
                 		
-                		<div className="input-group">
+                		<div className="input-group" style={{flexWrap: 'inherit'}}>
 							 <Autocomplete  
 			                    getItemValue={this.getItemValue}
 			                    items={this.state.autocompleteData}
@@ -321,10 +337,7 @@ render() {
 
                 	</div>
                 		<div className="col-md-auto" style={{width: "50%"}}>
-                		<button className="btn pull-right btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter</button>
-   						  <ul className="dropdown-menu">
-			            		<input id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
-   						  </ul>
+			            		<input className = "form-control" style={{maxWidth: '184px'}} id="myInput" placeholder="Filter..." value={this.state.input} onChange={this.handleChange} />
                 		</div>
                 	
                 </div>
@@ -333,7 +346,7 @@ render() {
                  	
 
 					<table className="table table-sm"> 
-						<thead>
+						<thead style={{border: 'none'}}>
 						<tr>
 							<th onClick={this.sortBy.bind(this, 'code')}>Code {this.state.name === 'code' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'title')}>Title {this.state.name === 'title' ? this.state.arrow : ''}</th>
@@ -341,6 +354,8 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'contact')}>Contact {this.state.name === 'contact' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'email')}>Email {this.state.name === 'email' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'phone')}>Phone {this.state.name === 'phone' ? this.state.arrow : ''}</th>
+							<th></th>
+							<th></th>
 						</tr>
 											
 						</thead>
@@ -354,7 +369,6 @@ render() {
 								<td>{supplier.contact}</td>
 								<td>{supplier.email}</td>
 								<td>{supplier.phone}</td>
-								<td></td>
 								<td><Link to={`/ssuppliers/${supplier.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
 								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, supplier)}><span className="oi oi-trash"></span></div></td>
 								</tr>

@@ -84,7 +84,10 @@ componentDidMount () {
 
 		axios.post(`/customers/${customersId}`, customer).then(response => {
 			//redirecting
-			history.push('/ccustomers/list')
+			history.push({
+			  pathname: '/ccustomers/list',
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({

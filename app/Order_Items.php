@@ -20,7 +20,9 @@ class Order_Items extends Model
     	'leadtime',
     	'item_status',
     	'notified',
-    	'customer_status'
+    	'customer_status',
+        'modified_UserID'
+
     ];
 
     public function order() {

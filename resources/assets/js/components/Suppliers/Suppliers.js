@@ -15,17 +15,82 @@ class Suppliers extends Component {
 			contact: '',
 			email: '',
 			phone: '',
-			errors: []
+			errors: [],
+			autocompleteData: []
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
 		this.handleFieldChange = this.handleFieldChange.bind(this)
 		this.hasErrorFor = this.hasErrorFor.bind(this)
     	this.renderErrorFor = this.renderErrorFor.bind(this)
+
+    	this.onChange = this.onChange.bind(this);
+        this.onSelect = this.onSelect.bind(this);
+        this.getItemValue = this.getItemValue.bind(this);
+        this.renderItem = this.renderItem.bind(this);
+        this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
 		
 }
 
+
+retrieveDataAsynchronously(searchText){
+       
+
+        axios.get('/suppliers/api?title='+searchText).then(response => {
+ 
+         this.setState({
+
+           autocompleteData: response.data
+         });
+        
+
+     }).catch(errors => {
+
+       console.log(errors);
+     })
+
+    }
+    
+
+    onChange(e){
+        this.setState({
+            contact: e.target.value
+           
+        });
+            
+
+        this.retrieveDataAsynchronously(e.target.value)
+    }
+
+  
+    onSelect(val){
+
+        this.setState({
+            contact: val
+        });
+
+    }
+
+   
+    renderItem(item, isHighlighted){
+        return (
+            <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                {item.title}
+            </div>   
+        ); 
+    }
+
+    
+    getItemValue(item){
+        
+        return `${item.title}`;
+    }
+
+
+
+   			 //Autocomplete
 //----------------------------------------------
+				
 				//Form
 
 	hasErrorFor (field) {
@@ -66,7 +131,10 @@ class Suppliers extends Component {
 
 		axios.post('/suppliers', supplier).then(response => {
 			//redirecting
-			history.push('/ssuppliers/list')
+			history.push({
+			  pathname: '/ssuppliers/list',
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({
@@ -120,8 +188,17 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Contact</label>
-				            <input id="contact" type="contact" name="contact" className={`form-control ${this.hasErrorFor('contact') ? 'is-invalid' : ''}`} value={this.state.contact} onChange={this.handleFieldChange}/>
-				            {this.renderErrorFor('contact')}				  
+				             <Autocomplete  
+			                    getItemValue={this.getItemValue}
+			                    items={this.state.autocompleteData}
+			                    renderItem={this.renderItem}
+			                    value={this.state.contact}
+			                    onChange={this.onChange}
+			                    onSelect={this.onSelect}
+			                     menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
+			                    inputProps={{name: "contact", className: "form-control"}}
+			                    wrapperStyle={{}}
+			             	  />				  
 				          </div>
 				        </div>
 

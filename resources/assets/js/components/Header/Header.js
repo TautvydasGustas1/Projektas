@@ -10,18 +10,16 @@ constructor(props){
 
 	this.state = {
 		order_id: '',
-  
+    userRole: ''
+    
 	}
 		this.handleClick = this.handleClick.bind(this);
 }
-
-
 
 handleClick (e) {
    
    e.preventDefault();
 
-   
       axios.get('/headerRequest').then(response => {
         this.setState({
          order_id: response.data.order_id,
@@ -29,19 +27,26 @@ handleClick (e) {
         })
         console.log(this.state.order_id)
         
-       if(this.state.order_id === null)
+       if(this.state.order_id !== '' && this.state.order_id !== undefined)
         {
-          window.location.pathname = `/oorders/list`;
+          
+          window.location.pathname = `/oorder/${this.state.order_id}/items`;
         }
-        else
-        {
-           window.location.pathname = `/oorder/${this.state.order_id}/items`;
-        }
+        
+        
       })
+        if(this.state.order_id === "")
+           window.location.pathname = `/oorders/list`;
    }
+
+   componentDidMount () {
+    axios.get('/admin/users/role').then(response => {
+      this.setState({
+        userRole: response.data
+      })
+    })
+  }
     
-
-
 render() {
 
 
@@ -50,12 +55,17 @@ return(
   <nav className='navbar navbar-expand-md navbar-light navbar-laravel fixed-top'>
     <div className='container'>
       <Link className='navbar-brand' to='/'>Project</Link>
-      <div align="right">
+      <div className="row">
+      <div className="btn-group" role="group">
       <Link to={'#'} className='btn btn-success' onClick={this.handleClick}><span className="oi oi-plus"></span></Link>
-      <Link to={`/ccustomers/list`} className='btn btn-secondary'>Customers</Link>
-      <Link to={`/pproducts/list`} className='btn btn-secondary'>Products</Link>
-      <Link to={`/ssuppliers/list`} className='btn btn-secondary'>Suppliers</Link>
-      <Link to={`/oorders/list`} className='btn btn-secondary'>Orders</Link>
+      <Link title="Customers" to={`/ccustomers/list`} className='btn btn-primary'><i className="fas fa-users"></i></Link>
+      <Link title="Products" to={`/pproducts/list`} className='btn btn-primary'><i className="fas fa-box-open"></i></Link>
+      <Link title="Suppliers" to={`/ssuppliers/list`} className='btn btn-primary'><i className="fas fa-pallet"></i></Link>
+      <Link title="Contacts" to={`/contacts/list`} className='btn btn-primary'><i className="fas fa-address-book"></i></Link>
+      <Link title="Orders" to={`/oorders/list`} className='btn btn-primary'><i className="fas fa-clipboard-check"></i></Link>
+      {this.state.userRole === 'Admin' ? <Link title="Users" to={`/admin/panel`} className='btn btn-primary'><i className="fas fa-unlock-alt"></i></Link> : ""}
+      </div>
+      
       </div>
     </div>
   </nav>

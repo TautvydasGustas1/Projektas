@@ -24,6 +24,7 @@ class CreateOrderItemsTable extends Migration
             $table->string('item_status')->nullable(true);
             $table->string('notified')->nullable(true);
             $table->string('customer_status')->nullable(true);
+            $table->string('modified_UserID');
 
             $table->timestamps();
         });

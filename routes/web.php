@@ -18,9 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 /*Route::view('/ssuppliers/{path?}', 'layouts/app');*/
-
 
 // Supplier
 //--------------------------------
@@ -32,6 +32,7 @@ Route::get('/suppliers', 'SupplierController@index')->name('suppliers');
 Route::post('/suppliers', 'SupplierController@save')->name('suppliers');
 Route::get('/suppliers/create', 'SupplierController@create')->name('suppliers');
 Route::get('/suppliers/search', 'SupplierController@getReactSearch')->name('suppliers');
+Route::get('/suppliers/api', 'SupplierController@API');
 //---------------------------------
 
 // Customer
@@ -46,6 +47,17 @@ Route::delete('/customers/{id}/delete', 'CustomerController@delete')->name('cust
 Route::post('/customers/{id}', 'CustomerController@update')->name('customers');
 Route::get('/customers/search', 'CustomerController@getReactSearch')->name('customers');
 //---------------------------------
+
+//Contacts
+//---------------------------------
+Route::get('/contactsIndex','ContactController@index')->name('contacts');
+Route::post('/contactsIndex','ContactController@save')->name('contacts');
+Route::post('/contacts/{id}', 'ContactController@update')->name('contacts');
+Route::get('/contacts/{id}/edit', 'ContactController@edit')->name('contacts');
+Route::get('/contacts/search', 'ContactController@getReactSearch')->name('contacts');
+Route::delete('/contacts/{id}/delete', 'ContactController@delete')->name('contacts');
+//---------------------------------
+
 
 //Product
 //----------------------------------
@@ -88,8 +100,22 @@ Route::get('headerRequest', 'OrderItemsController@headerRequest');
 Route::get('/order/{order}/search', 'OrderItemsController@getReactSearch')->name('order_items');
 //---------------------------------
 
+//Admin View
+//---------------------------------
+Route::get('/admin/users/not_confirmed', 'UserRolesController@UsersNotConfirmed');
+Route::delete('/admin/users/{id}/reject', 'UserRolesController@UserReject');
+Route::post('/admin/users/{id}/accept', 'UserRolesController@UserAccept');
+Route::get('/admin/users/role', 'UserRolesController@UserRole');
+Route::get('/admin/users/info', 'UserRolesController@UsersInfo');
+Route::post('/admin/users/{id}/change_role', 'UserRolesController@ChangeRole');
+//---------------------------------
+
+
 Route::view('/oorders/{path?}', 'layouts/app');
 Route::view('/ssuppliers/{path?}', 'layouts/app');
 Route::view('/pproducts/{path?}', 'layouts/app');
 Route::view('/ccustomers/{path?}', 'layouts/app');
 Route::view('/oorder/{order}/items/{path?}', 'layouts/app');
+Route::view('/contacts/{path?}', 'layouts/app');
+Route::view('/admin/users/{path?}', 'layouts/app');
+Route::view('/admin/{path?}', 'layouts/app');

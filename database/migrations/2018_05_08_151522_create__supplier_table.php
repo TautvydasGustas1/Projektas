@@ -21,6 +21,7 @@ class CreateSupplierTable extends Migration
             $table->string('contact')->nullable(true);
             $table->string('email')->unique();
             $table->string('phone')->nullable(true);
+            $table->string('modified_UserID');
             $table->timestamps();
         });
     }

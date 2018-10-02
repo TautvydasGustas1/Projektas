@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductController extends Controller
 {
@@ -29,38 +31,37 @@ class ProductController extends Controller
         public function save() {
 
         $this->validate(request(), [
-            'sku' => 'required|unique:products,sku'
+            'sku' => 'required|unique:products,sku',
+            'title' => 'required'
         ]);
 
-        Product::create(request()->all());
-
+        $UserID = Auth::id();
+        Product::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
 
   
-         return response()->json('Saved!');
+         return response()->json('Sekmingai pridėtas naujas įrašas!');
     }
-
-
     
         public function edit($id) {
 
         $product = Product::FindOrFail($id);
-
-
          return $product->toJson();
     }
 
     
     public function update($id, Request $request) {
 
+        $UserID = Auth::id();
         $products = Product::FindOrFail($id);
 
         $this->validate(request(), [
-            'sku' => 'required|unique:products,sku,'.$id
+            'sku' => 'required|unique:products,sku,'.$id,
+            'title' => 'required'
         ]);
 
-        $products->update($request->all());
+        $products->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
-        return response()->json('Updated!');
+        return response()->json('Sekmingai pataisytas įrašas');
     }
 
 
@@ -68,15 +69,12 @@ class ProductController extends Controller
             $product = Product::find($id);
             $product->delete();
 
-
-
         return response()->json('Supplier deleted');
     }
 
 
     public function getReactSearch(Request $request)
     {
-
         $string = request()->q;
         $new_string = str_replace('+', '%2B', $string);
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Customer;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -26,11 +27,13 @@ class CustomerController extends Controller
 
    	public function save() {
 
-   		Customer::create(request()->all());
+      $UserID = Auth::id();
+
+   		Customer::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
 
 
 
-   		 return response()->json('Saved!');
+   		 return response()->json('Sekmingai pridėtas naujas įrašas!');
    	}
 
    	public function edit($id) {
@@ -42,15 +45,14 @@ class CustomerController extends Controller
    	}
 
    		public function update($id, Request $request) {
-
+      
+      $UserID = Auth::id();
    		$customers = Customer::FindOrFail($id);
 
-   		\Session::flash('flash_message edit', 'Customer has been edited succesfully!');
-
-   		$customers->update($request->all());
+   		$customers->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
 
-		return response()->json('Updated!');
+		return response()->json('Sekmingai pataisytas įrašas');
    	}
 
    	public function delete($id) {

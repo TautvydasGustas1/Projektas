@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Supplier;
+use App\Contact;
+use Illuminate\Support\Facades\Auth;
+
 
 class SupplierController extends Controller
 {
    	public function __construct() {
    		$this->middleware('auth');
    	}
-
 
    	public function index(Request $request) {
 
@@ -33,10 +35,11 @@ class SupplierController extends Controller
    			'title' => 'required',
    			'email' => 'required|unique:suppliers,email'
    		]);
-
-   		Supplier::create(request()->all());
+      
+      $UserID = Auth::id();
+   		Supplier::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
   
-   		 return response()->json('Saved!');
+       return response()->json('Sekmingai pridėtas naujas įrašas!');
    	}
 
    	public function edit($id) {
@@ -48,7 +51,7 @@ class SupplierController extends Controller
    	}
 
    	public function update($id, Request $request) {
-
+      $UserID = Auth::id();
    		$suppliers = Supplier::FindOrFail($id);
 
    		$this->validate(request(), [
@@ -57,16 +60,14 @@ class SupplierController extends Controller
             'email' => 'required|unique:suppliers,email,'.$id
    		]);
 
-   		\Session::flash('flash_message edit', 'Supplier has been edited succesfully!');
+   		$suppliers->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
-   		$suppliers->update($request->all());
-
-		return response()->json('Updated!');
+		return response()->json('Sekmingai pataisytas įrašas');
    	}
 
    		public function delete($id) {
    			$supplier = Supplier::find($id);
-            $supplier->delete();
+        $supplier->delete();
 
            
 
@@ -83,5 +84,9 @@ class SupplierController extends Controller
         return $suppliers->toJson();
     }
 
-
+    public function API(Contact $contact)
+    {
+        $contact = Contact::where('title', 'like', '%'.request()->title.'%')->limit(10)->get();
+        return response()->json($contact);
+    }
 }

@@ -227,7 +227,10 @@ componentDidMount () {
 
 		axios.post(`/order/${orderItemId}/items/${orderItemsId}`, orderItems).then(response => {
 			//redirecting
-			history.push(`/oorder/${orderItemId}/items`)
+			history.push({
+			  pathname: `/oorder/${orderItemId}/items`,
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({

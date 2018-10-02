@@ -10,6 +10,15 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
+                        
+                        @if(Session::has('message'))
+                        <p class="alert alert-success">{{ Session::get('message') }}</p>
+                        @endif
+
+                        @if(Session::has('loginNotAuthenticated'))
+                        <p class="alert alert-danger">{{ Session::get('loginNotAuthenticated') }}</p>
+                        @endif
+
 
                         <div class="form-group row">
                             <label for="email" class="col-sm-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
@@ -51,6 +60,9 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-8 offset-md-4">
+
+                                
+
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Login') }}
                                 </button>
@@ -58,6 +70,11 @@
                                 <a class="btn btn-link" href="{{ route('password.request') }}">
                                     {{ __('Forgot Your Password?') }}
                                 </a>
+
+                                <a class="btn btn-link" href="{{ route('register') }}">
+                                    {{ __("Register") }}
+                                </a>
+
                             </div>
                         </div>
                     </form>

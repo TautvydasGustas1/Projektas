@@ -24,7 +24,8 @@ class OrderItemsCreate extends Component {
 			customer_status: '',
 			autocompleteData: [],
 			autocompleteData1: [],
-			errors: []
+			errors: [],
+
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -83,7 +84,7 @@ retrieveDataAsynchronously(searchText){
    
     renderItem(item, isHighlighted){
         return (
-            <div style={{background: isHighlighted ? 'lightgray' : 'white' }}>
+            <div  key={item.id} style={{background: isHighlighted ? 'lightgray' : 'white' }}>
                 {item.sku}
             </div>   
         ); 
@@ -137,7 +138,7 @@ retrieveDataAsynchronouslyCust(searchText){
    
     renderItemCust(item, isHighlighted){
         return (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+            <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
                 {item.last_name}
             </div>   
         ); 
@@ -215,7 +216,10 @@ componentDidMount () {
 
 		axios.post(`/order/${orderItemId}/items`, orderItems).then(response => {
 			//redirecting
-			history.push(`/oorder/${orderItemId}/items`)
+			history.push({
+			  pathname: `/oorder/${orderItemId}/items`,
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({
@@ -301,7 +305,7 @@ render() {
 								</div> 
 				 			</div>
 
-
+				 	
 				        <div className="row">
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
@@ -310,6 +314,7 @@ render() {
 				            {this.renderErrorFor('contact_info')}				  
 				          </div>
 				        </div>
+				        
 
 				         <div className="row">
 				          <div className="col-md-4"></div>

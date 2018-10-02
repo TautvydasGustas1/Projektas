@@ -11,7 +11,8 @@ class Order extends Model
 
     	'order_no',
     	'status',
-    	'supplier'
+    	'supplier',
+        'modified_UserID'
     ];
 
     public function GetSupplierID() {

@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_no')->unique();
             $table->string('status')->nullable(true);
             $table->string('supplier')->nullable(true);
+            $table->string('modified_UserID');
 
             $table->timestamps();
         });

@@ -140,7 +140,10 @@ retrieveDataAsynchronously(searchText){
 
 		axios.post(`/orders/${orderId}`, order).then(response => {
 			//redirecting
-			history.push('/oorders/list')
+			history.push({
+			  pathname: '/oorders/list',
+			  state: { some: response.data }
+			})
 
 		}).catch(error => {
 			this.setState({

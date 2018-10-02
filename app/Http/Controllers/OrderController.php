@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Order;
 use Illuminate\Http\Request;
 use App\Supplier;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class OrderController extends Controller
@@ -17,8 +19,7 @@ class OrderController extends Controller
 
         $orders = Order::limit(25)->skip($request->page)->get();
 
-      
-       
+
         return $orders->toJson();
     }
 
@@ -34,16 +35,22 @@ class OrderController extends Controller
     
    public function save() {
 
+        $UserID = Auth::id();
+
+
         $this->validate(request(), [
 
             'order_no' => 'required',
             'order_no' => 'required|unique:orders,order_no'
         ]);
 
-        Order::create(request()->all());
+
+        
+        
+        Order::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
 
   
-        return response()->json('Saved!');
+         return response()->json('Sekmingai pridėtas naujas įrašas!');
     }
 
     
@@ -60,17 +67,17 @@ class OrderController extends Controller
    public function update($id, Request $request) {
 
         $orders = Order::FindOrFail($id);
+        $UserID = Auth::id();
 
          $this->validate(request(), [
-            'order_no' => 'required|unique:orders,order_no,'.$id
-            
+            'order_no' => 'required|unique:orders,order_no,'.$id           
         ]);
 
         \Session::flash('flash_message edit', 'Order has been edited succesfully!');
 
-        $orders->update($request->all());
+        $orders->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
-       return response()->json('Updated!');
+       return response()->json('Sekmingai pataisytas įrašas');
     }
 
 
