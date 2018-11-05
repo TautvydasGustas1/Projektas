@@ -72,7 +72,7 @@ return(
       </div>
       
       </div>
-      <Link title="Logout" onClick={this.handleLogout} className='btn btn-danger btn-sm' to={'#'}><i class="fas fa-sign-out-alt"></i></Link>
+      <Link title="Logout" onClick={this.handleLogout} className='btn btn-danger btn-sm' to={'#'}><i className="fas fa-sign-out-alt"></i></Link>
     </div>
   </nav>
   )

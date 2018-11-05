@@ -88,11 +88,12 @@ constructor () {
 
 	GetSearchResults() {
 		const orderItemId = this.props.match.params.id
+		var fields = ["sku", "product_title", "customer_title"];
 
 		var str = this.state.query;
 		var res = str.replace("+", "%2B");
 
-    axios.get(`/order/${orderItemId}/search?q=`+res).then(response => {
+    axios.get(`/order/${orderItemId}/search?q=`+res+'&fields='+fields).then(response => {
 	      	
 	     	 this.setState({
 	       orderItems: response.data
@@ -107,8 +108,10 @@ constructor () {
 
 retrieveDataAsynchronously(searchText){
 	const orderItemId = this.props.match.params.id
+
+	var fields = ["sku", "product_title", "customer_title"];
        
-        axios.get(`/order/${orderItemId}/search?q=`+searchText).then(response => {
+        axios.get(`/order/${orderItemId}/search?q=`+searchText+'&fields='+fields).then(response => {
  
          this.setState({
 
@@ -143,7 +146,7 @@ retrieveDataAsynchronously(searchText){
     renderItem(item, isHighlighted){
         return (
             <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item.sku}
+                {item.sku} {item.product_title} {item.customer_title}
             </div>   
         ); 
     }
@@ -405,6 +408,10 @@ render() {
 				{
 					word.customer_status = "CC"
 				}
+				else if(word.customer_status === "5")
+				{
+					word.customer_status = "C"
+				}
 
 
 				
@@ -539,12 +546,12 @@ render() {
 								<td>{orderItem.qty}</td>
 								<td>{orderItem.deadline}</td>
 								<td>{orderItem.leadtime}</td>
-								<td className={orderItem.item_status==="N" ? "text-primary" : orderItem.item_status==="R" ? "text-info" : orderItem.item_status==="C" ? "text-secondary" : orderItem.item_status==="Dec" ? "text-danger" : orderItem.item_status==="U" ? "text-dark" : "text-success"}><b>
-								</b><span className="d-block d-sm-none">{orderItem.item_status}</span><span className="Full">{orderItem.item_status==="N" ? "Not Requested" : orderItem.item_status==="R" ? "Requested" : orderItem.item_status==="C" ? "Confirmed" : orderItem.item_status==="Dec" ? "Declined" : orderItem.item_status==="U" ? "Undecided" : orderItem.item_status==="D" ? "Delivered" : ""}</span></td>				
+								<td className={orderItem.item_status==="N" ? "text-primary" : orderItem.item_status==="R" ? "text-info" : orderItem.item_status==="C" ? "text-secondary" : orderItem.item_status==="Dec" ? "text-danger" : orderItem.item_status==="U" ? "text-dark" : orderItem.item_status==="Del" ? "text-success" : ""}><b>
+								</b><span className="d-block d-sm-none">{orderItem.item_status}</span><span className="Full">{orderItem.item_status==="N" ? "Not Requested" : orderItem.item_status==="R" ? "Requested" : orderItem.item_status==="C" ? "Confirmed" : orderItem.item_status==="Dec" ? "Declined" : orderItem.item_status==="U" ? "Undecided" : orderItem.item_status==="Del" ? "Delivered" : ""}</span></td>				
 								<td className={orderItem.notified === "SN" ? "text-primary" : orderItem.notified === "SNN" ? "text-secondary" : orderItem.notified === "ANN" ? "text-warning" : "text-success"}><b>
 								</b><span className="d-block d-sm-none">{orderItem.notified}</span><span className="Full">{orderItem.notified === "SN" ? "Customer notified about status" : orderItem.notified === "SNN" ? "Customer not notified about status" : orderItem.notified === "ANN" ? "Customer not notified about arrival" : orderItem.notified === "AN" ? "Customer notified about arrival" : ""}</span></td>
 								<td className={orderItem.customer_status === "R" ? "text-primary" : orderItem.customer_status === "P" ? "text-secondary" : orderItem.customer_status === "N" ? "text-warning" : orderItem.customer_status === "CR" ? "text-danger" : "text-success"}><b>	
-								</b><span className="d-block d-sm-none">{orderItem.customer_status}</span><span className="Full">{orderItem.customer_status === "R" ? "Request" : orderItem.customer_status === "P" ? "Price offer" : orderItem.customer_status === "N" ? "Negotiation" : orderItem.customer_status === "CR" ? "Closed refused" : orderItem.customer_status === "CC" ? "Closed confirmed" : ""}</span></td>
+								</b><span className="d-block d-sm-none">{orderItem.customer_status}</span><span className="Full">{orderItem.customer_status === "R" ? "Request" : orderItem.customer_status === "P" ? "Price offer" : orderItem.customer_status === "N" ? "Negotiation" : orderItem.customer_status === "CR" ? "Closed refused" : orderItem.customer_status === "CC" ? "Closed confirmed" : orderItem.customer_status === "C" ? "Confirmed" : ""}</span></td>
 								<td><Link to={`/oorder/${orderItem.order_id}/items/${orderItem.id}`} className='btn btn-info btn-sm' title="Edit"><span className="oi oi-wrench"></span></Link></td>
 								<td><div className='btn btn-danger btn-sm' title="Delete" onClick={this.deleteUser.bind(this, orderItem)}><span className="oi oi-trash"></span></div></td>
 								</tr>

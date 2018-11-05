@@ -23,8 +23,8 @@ class Supplier extends Model
     	return $this->hasMany(Order::class); 
     }
 
-    public function GetContactID() {
-
-        return $this->belongsTo(Contact::class); 
+    public function GiveSupplierID_Contacts() {
+  
+        return $this->hasMany(Contact::class); 
     }
 }

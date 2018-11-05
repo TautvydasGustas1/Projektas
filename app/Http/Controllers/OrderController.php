@@ -37,16 +37,12 @@ class OrderController extends Controller
 
         $UserID = Auth::id();
 
-
         $this->validate(request(), [
 
             'order_no' => 'required',
             'order_no' => 'required|unique:orders,order_no'
         ]);
 
-
-        
-        
         Order::create(array_merge(request()->all(), ['modified_UserID' => $UserID]));
 
   
@@ -73,7 +69,6 @@ class OrderController extends Controller
             'order_no' => 'required|unique:orders,order_no,'.$id           
         ]);
 
-        \Session::flash('flash_message edit', 'Order has been edited succesfully!');
 
         $orders->update(array_merge($request->all(), ['modified_UserID' => $UserID]));
 
@@ -100,9 +95,20 @@ class OrderController extends Controller
       public function getReactSearch(Request $request)
     {
 
-        $order = Order::where('order_no', 'like', '%'.request()->q.'%')
+         $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
+
+        $DB = new Order;
+        $searchQuery = '%' . $request->q . '%';
+     
+                $comp = $DB->select('*')
+                ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->get();
+
+        return $comp->toJson();
+
+        /*$order = Order::where('order_no', 'like', '%'.request()->q.'%')
         ->orWhere('supplier', 'like', '%'.request()->q . '%')->limit(30)->get();
 
-        return $order->toJson();
+        return $order->toJson();*/
     }
 }

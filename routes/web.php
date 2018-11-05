@@ -32,7 +32,6 @@ Route::get('/suppliers', 'SupplierController@index')->name('suppliers');
 Route::post('/suppliers', 'SupplierController@save')->name('suppliers');
 Route::get('/suppliers/create', 'SupplierController@create')->name('suppliers');
 Route::get('/suppliers/search', 'SupplierController@getReactSearch')->name('suppliers');
-Route::get('/suppliers/api', 'SupplierController@API');
 //---------------------------------
 
 // Customer
@@ -56,6 +55,7 @@ Route::post('/contacts/{id}', 'ContactController@update')->name('contacts');
 Route::get('/contacts/{id}/edit', 'ContactController@edit')->name('contacts');
 Route::get('/contacts/search', 'ContactController@getReactSearch')->name('contacts');
 Route::delete('/contacts/{id}/delete', 'ContactController@delete')->name('contacts');
+Route::get('/contacts/api', 'ContactController@API');
 //---------------------------------
 
 
@@ -112,10 +112,9 @@ Route::post('/admin/users/{id}/change_role', 'UserRolesController@ChangeRole');
 
 
 Route::view('/oorders/{path?}', 'layouts/app');
+Route::view('/contacts/{path?}', 'layouts/app');
 Route::view('/ssuppliers/{path?}', 'layouts/app');
 Route::view('/pproducts/{path?}', 'layouts/app');
 Route::view('/ccustomers/{path?}', 'layouts/app');
 Route::view('/oorder/{order}/items/{path?}', 'layouts/app');
-Route::view('/contacts/{path?}', 'layouts/app');
-Route::view('/admin/users/{path?}', 'layouts/app');
 Route::view('/admin/{path?}', 'layouts/app');

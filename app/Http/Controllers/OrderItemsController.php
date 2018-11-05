@@ -98,7 +98,8 @@ class OrderItemsController extends Controller
 
      public function CustomerAPI(Customer $customer)
     {
-        $customer = Customer::where('last_name', 'like', '%'.request()->last_name.'%')->limit(10)->get();
+        $customer = Customer::where('last_name', 'like', '%'.request()->last_name.'%')
+        ->orWhere('first_name', 'like', '%'.request()->last_name.'%')->limit(10)->get();
         return response()->json($customer);
     }
 
@@ -114,12 +115,17 @@ class OrderItemsController extends Controller
     {
        // $order_items = Order_Items::where('order_id', $id)->get();
 
-        $order_items = Order_Items::where('sku', 'like', '%'.request()->q.'%')->where('order_id', $id)
-        ->orWhere('product_title', 'like', '%'.request()->q . '%')->where('order_id', $id)
-        ->orWhere('customer_title', 'like', '%'.request()->q . '%')->where('order_id', $id)
-        ->orWhere('contact_info', 'like', '%'.request()->q . '%')->where('order_id', $id)->limit(30)->get();
+        $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
 
-        return $order_items->toJson();
+        $DB = new Order_Items;
+        $searchQuery = '%' . $request->q . '%';
+        //$comp = Order_Items::where('order_id', $id)->get();     
+        $comp = $DB->select('*')
+        ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->where('order_id', $id)->get();
+
+       // $comp->GetSuppliersID;
+        return $comp->toJson();
     }
 
 }

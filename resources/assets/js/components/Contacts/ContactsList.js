@@ -39,6 +39,7 @@ constructor () {
       this.setState({
         contacts: response.data
       })
+   //	console.log(this.state.contacts[0].get_suppliers_i_d.code);
     })
     window.addEventListener("scroll", this.handleScroll);
     this.state.message = this.props.location.state;
@@ -79,16 +80,15 @@ constructor () {
 			query: event.target.value,
 		})
 	}
-
-
+	
 	GetSearchResults() {
-
+	var fields = ["last_name","first_name","title","supplier_id"];
 
 	var str = this.state.query;
 	var res = str.replace("+", "%2B");
 
-    axios.get('/contacts/search?q='+res).then(response => {
-	      	
+    axios.get('/contacts/search?q='+res+'&fields='+fields).then(response => {
+	      	console.log(response.data)
 	     	 this.setState({
 	       contacts: response.data
 
@@ -102,11 +102,12 @@ constructor () {
 
 retrieveDataAsynchronously(searchText){
        
+		var fields = ["last_name","first_name","title","supplier_id"];
+		//var fields  = toString(obj);
 
-        axios.get('/contacts/search?q='+searchText).then(response => {
+        axios.get('/contacts/search?q='+searchText+'&fields='+fields) .then(response => {
  
          this.setState({
-
            autocompleteData: response.data
          });
         
@@ -141,8 +142,8 @@ retrieveDataAsynchronously(searchText){
    
     renderItem(item, isHighlighted){
         return (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item.last_name}
+            <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                {item.title} {item.first_name} {item.last_name} 
             </div>   
         ); 
     }
@@ -150,7 +151,7 @@ retrieveDataAsynchronously(searchText){
     
     getItemValue(item){
         
-        return `${item.last_name}`;
+        return `${item.title}`;
     }
 
 
@@ -198,6 +199,10 @@ retrieveDataAsynchronously(searchText){
 				if(entry.email === null)
 				{
 					entry.email = ''
+				}
+				if(entry.get_suppliers_i_d.title === null)
+				{
+					entry.get_suppliers_i_d.title = ''
 				}
 				if(entry.address === null)
 				{
@@ -280,10 +285,15 @@ render() {
 			{
 				word.email = ''
 			}
+			if(word.get_suppliers_i_d.title === null)
+			{
+				word.get_suppliers_i_d.title = ''
+			}
 			if(word.address === null)
 			{
 				word.address = ''
 			}
+
 			if(word.phone === null)
 			{
 				word.phone = ''
@@ -303,6 +313,10 @@ render() {
 			}
 			
 			if(word.email.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
+			{
+				return true;
+			}
+			if(word.get_suppliers_i_d.title.toLowerCase().indexOf(this.state.input.toLowerCase()) !== -1)
 			{
 				return true;
 			}
@@ -378,6 +392,7 @@ render() {
 							<th onClick={this.sortBy.bind(this, 'first_name')}>First Name {this.state.name === 'first_name' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'last_name')}>Last Name {this.state.name === 'last_name' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'email')}>Email {this.state.name === 'email' ? this.state.arrow : ''}</th>
+							<th onClick={this.sortBy.bind(this, 'get_suppliers_i_d.title')}>Supplier {this.state.name === 'get_suppliers_i_d.title' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'address')}>Address {this.state.name === 'address' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'phone')}>Phone {this.state.name === 'phone' ? this.state.arrow : ''}</th>
 							<th onClick={this.sortBy.bind(this, 'comments')}>Comments {this.state.name === 'comments' ? this.state.arrow : ''}</th>
@@ -395,6 +410,7 @@ render() {
 								<td>{contact.first_name}</td>
 								<td>{contact.last_name}</td>
 								<td>{contact.email}</td>
+								<td>{contact.get_suppliers_i_d.title}</td>
 								<td>{contact.address}</td>
 								<td>{contact.phone}</td>
 								<td>{contact.comments}</td>

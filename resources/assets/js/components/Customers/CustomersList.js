@@ -84,11 +84,11 @@ constructor () {
 
 	GetSearchResults() {
 
-
+	var fields = ["first_name", "last_name"];
 	var str = this.state.query;
 	var res = str.replace("+", "%2B");
 
-    axios.get('/customers/search?q='+res).then(response => {
+    axios.get('/customers/search?q='+res+'&fields='+fields).then(response => {
 	      	
 	     	 this.setState({
 	       customers: response.data
@@ -104,7 +104,9 @@ constructor () {
 retrieveDataAsynchronously(searchText){
        
 
-        axios.get('/customers/search?q='+searchText).then(response => {
+		var fields = ["first_name", "last_name"];
+
+        axios.get('/customers/search?q='+searchText+'&fields='+fields).then(response => {
  
          this.setState({
 
@@ -144,7 +146,7 @@ retrieveDataAsynchronously(searchText){
     renderItem(item, isHighlighted){
         return (
             <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item.last_name}
+               {item.first_name} {item.last_name}
             </div>   
         ); 
     }

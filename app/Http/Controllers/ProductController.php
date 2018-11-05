@@ -75,12 +75,21 @@ class ProductController extends Controller
 
     public function getReactSearch(Request $request)
     {
-        $string = request()->q;
-        $new_string = str_replace('+', '%2B', $string);
 
-        $products = Product::where('title', 'like', '%' .request()->q.'%')
+        $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
+
+        $DB = new Product;
+        $searchQuery = '%' . $request->q . '%';
+     
+                $comp = $DB->select('*')
+                ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->get();
+
+        return $comp->toJson();
+
+       /* $products = Product::where('title', 'like', '%' .request()->q.'%')
         ->orWhere('sku', 'like', '%'.request()->q. '%')->limit(30)->get();
 
-        return $products->toJson();
+        return $products->toJson();*/
     }
 }

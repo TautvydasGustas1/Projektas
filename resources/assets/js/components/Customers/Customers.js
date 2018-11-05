@@ -15,7 +15,8 @@ class Customers extends Component {
 			address: '',
 			phone: '',
 			errors: [],
-			message: ''
+			message: '',
+			edit: false
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -42,6 +43,24 @@ class Customers extends Component {
     }
   }
 
+  componentDidMount () {
+  	if(this.props.match.params.id !== undefined)
+  	{
+	    const customersId = this.props.match.params.id
+
+	    axios.get(`/customers/${customersId}/edit`).then(response => {
+	      this.setState({
+	        first_name: response.data.first_name,
+	        last_name: response.data.last_name,
+	        email: response.data.email,
+	        address: response.data.address,
+	        phone: response.data.phone
+	      })
+	    })
+	    this.state.edit = true;
+  	}
+  }
+
 	handleFieldChange (event) {
 		this.setState({
 			[event.target.name]: event.target.value
@@ -52,6 +71,8 @@ class Customers extends Component {
 	handleSubmit (event) {
 		event.preventDefault()
 		const { history } = this.props
+		const customersId = this.props.match.params.id
+		
 
 
 
@@ -63,7 +84,7 @@ class Customers extends Component {
 			phone: this.state.phone
 		}
 
-		axios.post('/customers', customers).then(response => {
+		axios.post(this.state.edit === true ? `/customers/${customersId}` : '/customers', customers).then(response => {
 			//redirecting
 			history.push({
 			  pathname: '/ccustomers/list',
@@ -85,7 +106,7 @@ render() {
    			 <div className="row justify-content-center">
         		<div className="col-md-8">
            			 <div className="card">
-		                <div className="card-header" align="center"><h1>Create Customer</h1></div>
+		                <div className="card-header" align="center"><h1>{this.state.edit === true ? 'Edit' : 'Create'} Customer</h1></div>
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
@@ -94,7 +115,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>First Name</label>
-				            <input id="first_name" type="first_name" name="first_name" className={`form-control ${this.hasErrorFor('first_name') ? 'is-invalid' : ''}`} value={this.state.first_name} onChange={this.handleFieldChange}/>
+				            <input id="first_name" type="first_name" name="first_name" className={`form-control ${this.hasErrorFor('first_name') ? 'is-invalid' : ''}`} value={this.state.first_name || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('first_name')}				  
 				          </div>
 				        </div>
@@ -103,7 +124,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Last Name</label>
-				            <input id="last_name" type="last_name" name="last_name" className={`form-control ${this.hasErrorFor('last_name') ? 'is-invalid' : ''}`} value={this.state.last_name} onChange={this.handleFieldChange}/>
+				            <input id="last_name" type="last_name" name="last_name" className={`form-control ${this.hasErrorFor('last_name') ? 'is-invalid' : ''}`} value={this.state.last_name || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('last_name')}				  
 				          </div>
 				        </div>
@@ -112,7 +133,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Email</label>
-				            <input id="email" type="email" name="email" className={`form-control ${this.hasErrorFor('email') ? 'is-invalid' : ''}`} value={this.state.email} onChange={this.handleFieldChange}/>
+				            <input id="email" type="email" name="email" className={`form-control ${this.hasErrorFor('email') ? 'is-invalid' : ''}`} value={this.state.email || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('email')}				  
 				          </div>
 				        </div>
@@ -121,7 +142,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Address</label>
-				            <textarea id="address" type="address" name="address" className={`form-control ${this.hasErrorFor('address') ? 'is-invalid' : ''}`} value={this.state.address} onChange={this.handleFieldChange}/>
+				            <textarea id="address" type="address" name="address" className={`form-control ${this.hasErrorFor('address') ? 'is-invalid' : ''}`} value={this.state.address || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('address')}				  
 				          </div>
 				        </div>
@@ -130,7 +151,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Phone</label>
-				            <input id="phone" type="phone" name="phone" className={`form-control ${this.hasErrorFor('phone') ? 'is-invalid' : ''}`} value={this.state.phone} onChange={this.handleFieldChange}/>
+				            <input id="phone" type="phone" name="phone" className={`form-control ${this.hasErrorFor('phone') ? 'is-invalid' : ''}`} value={this.state.phone || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('phone')}				  
 				          </div>
 				        </div>

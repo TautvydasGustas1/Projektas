@@ -45,7 +45,8 @@ constructor () {
 
 retrieveDataAsynchronously(searchText){
        
-        axios.get('/products/search?q='+searchText).then(response => {
+         var fields = ["sku", 'title'];
+        axios.get('/products/search?q='+searchText+'&fields='+fields).then(response => {
  
          this.setState({
 
@@ -87,7 +88,7 @@ retrieveDataAsynchronously(searchText){
         	
         return (
             <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-             {item.title} 
+             	{item.sku} {item.title} 
              
             </div>   
         ); 
@@ -96,7 +97,7 @@ retrieveDataAsynchronously(searchText){
     
     getItemValue(item){
         
-        return `${item.title}`;
+        return `${item.sku}`;
     }
 
 
@@ -241,10 +242,11 @@ retrieveDataAsynchronously(searchText){
 
 	GetSearchResults() {
 
+	var fields = ["sku", 'title'];
 	var str = this.state.query;
 	var res = str.replace("+", "%2B");
 
-    axios.get('/products/search?q='+res).then(response => {
+    axios.get('/products/search?q='+res+'&fields='+fields).then(response => {
 	     	 this.setState({
 	       products: response.data
 

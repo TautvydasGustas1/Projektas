@@ -15,7 +15,8 @@ class Orders extends Component {
 			message: '',
 			autocompleteData: [],
 			errors: [],
-			userID: ''
+			userID: '',
+			edit: false
 		}
 
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -28,13 +29,15 @@ class Orders extends Component {
         this.getItemValue = this.getItemValue.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
+
+
 		
 }
 
 retrieveDataAsynchronously(searchText){
        
 
-        axios.get('/orders/api?title='+searchText).then(response => {
+        axios.get('/orders/api?title='+searchText, 0).then(response => {
  
          this.setState({
 
@@ -90,14 +93,22 @@ retrieveDataAsynchronously(searchText){
 //----------------------------------------------
 				//Form
 
-	/*componentDidMount () {
+	componentDidMount () {
 
-    axios.get(`/orders/create`).then(response => {
-      this.setState({
-        userID: response.data.userID
-      })
-    })
-  }*/
+	if(this.props.match.params.id !== undefined)
+	{
+	    const orderId = this.props.match.params.id
+
+	    axios.get(`/orders/${orderId}/edit`).then(response => {
+	      this.setState({
+	        order_no: response.data.order_no,
+	        status: response.data.status,
+	        supplier: response.data.supplier
+	      })
+	    })	
+	    this.state.edit = true;
+	}
+  }
 
 	hasErrorFor (field) {
     return !!this.state.errors[field]
@@ -123,6 +134,7 @@ retrieveDataAsynchronously(searchText){
 	handleSubmit (event) {
 		event.preventDefault()
 		const { history } = this.props
+		const orderId = this.props.match.params.id
 		
 
 		const order = {
@@ -132,14 +144,12 @@ retrieveDataAsynchronously(searchText){
 
 		}
 
-		axios.post('/orders', order).then(response => {
+		axios.post(this.state.edit === true ? `/orders/${orderId}` : '/orders', order).then(response => {
 			//redirecting
 			history.push({
 			  pathname: '/oorders/list',
 			  state: { some: response.data }
 			})
-
-
 		}).catch(error => {
 			this.setState({
 				errors: error.response.data.errors
@@ -156,7 +166,7 @@ render() {
    			 <div className="row justify-content-center">
         		<div className="col-md-8">
            			 <div className="card">
-		                <div className="card-header" align="center"><h1>Create Order</h1></div>
+		                <div className="card-header" align="center"><h1>{this.state.edit === true ? 'Edit' : 'Create'} Order</h1></div>
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
@@ -167,8 +177,8 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Order No</label>
-				            <input id="order_no" type="order_no" name="order_no" className={`form-control ${this.hasErrorFor('order_no') ? 'is-invalid' : ''}`} value={this.state.order_no} onChange={this.handleFieldChange}/>
-				            {this.renderErrorFor('order_no')}				  
+				            <input id="order_no" type="order_no" name="order_no" className={`form-control ${this.hasErrorFor('order_no') ? 'is-invalid' : ''}`} value={this.state.order_no || ''} onChange={this.handleFieldChange}/>
+				            {this.renderErrorFor("order_no")}				  
 				          </div>
 				        </div>
 
@@ -177,7 +187,7 @@ render() {
 						<div className="col-md-4"></div>
 				        	<div className="form-group col-md-5">
 						 <label>Status</label>
-						  <select className="form-control" name="status" value={this.state.status} onChange={this.handleFieldChange} >
+						  <select className="form-control" name="status" value={this.state.status || ''} onChange={this.handleFieldChange} >
 						  	<option value=""> </option>
 						    <option value="0">0 - Not sent</option>
 						    <option value="1">1 - Sent current to open</option>
@@ -197,7 +207,7 @@ render() {
                     getItemValue={this.getItemValue}
                     items={this.state.autocompleteData}
                     renderItem={this.renderItem}
-                    value={this.state.supplier}
+                    value={this.state.supplier || ''}
                     onChange={this.onChange}
                     onSelect={this.onSelect}
                      menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}

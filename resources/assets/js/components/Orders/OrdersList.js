@@ -92,10 +92,11 @@ constructor () {
 
 	GetSearchResults() {
 
+		var fields = ["order_no"];
 		var str = this.state.query;
 		var res = str.replace("+", "%2B");
 
-    axios.get('/orders/search?q='+res).then(response => {
+    axios.get('/orders/search?q='+res+'&fields='+fields).then(response => {
 	      	
 	     	 this.setState({
 	       orders: response.data
@@ -110,8 +111,9 @@ constructor () {
 
 retrieveDataAsynchronously(searchText){
        
+       var fields = ["order_no"];
 
-        axios.get('/orders/search?q='+searchText).then(response => {
+        axios.get('/orders/search?q='+searchText+'&fields='+fields).then(response => {
  
          this.setState({
 

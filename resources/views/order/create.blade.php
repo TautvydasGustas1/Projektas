@@ -8,8 +8,7 @@
                 <div class="card-body">
 	                  <form method="post" action="{{url('orders')}}" enctype="multipart/form-data">
 				        @csrf
-						
-						
+												
 				        <div class="row">
 				          <div class="col-md-4"></div>
 				         	 <div class="form-group col-md-4">

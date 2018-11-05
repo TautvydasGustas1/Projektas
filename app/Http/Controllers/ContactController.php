@@ -5,14 +5,28 @@ namespace App\Http\Controllers;
 use App\Contact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Supplier;
+use App\DB;
 
 class ContactController extends Controller
 {
     
 
-    public function index(Request $request)
+    public function index(Request $request, Supplier $supplier)
     {
-        $contacts = Contact::limit(25)->skip($request->page)->get();
+       // $supplier_id = Contact::all('supplier');
+        //dd($supplier_id);
+       // $supplier->find($supplier_id)->code;
+      //  dd($supplier->find(2)->code);
+      // Supplier::with('GiveSupplierID_Contacts')->get();
+      // dd($supplier->with('GiveSupplierID_Contacts')->where('title')->get());
+
+        //dd($supplier->all('code'));
+        $contacts = Contact::with('GetSuppliersID')->limit(25)->skip($request->page)->get();
+       // dd($contacts);
+        //dd(Contact::with('GetSuppliersID')->first());
+        //$contacts = Contact::all('first_name', 'last_name', 'title', 'address', 'email', 'phone', 'comments');
+
         return $contacts->toJson();
     }
 
@@ -100,11 +114,23 @@ class ContactController extends Controller
     public function getReactSearch(Request $request)
     {
 
-        $contact = Contact::where('last_name', 'like', '%'.request()->q.'%')
-        ->orWhere('first_name', 'like', '%'.request()->q . '%')
-        ->orWhere('title', 'like', '%'.request()->q . '%')->limit(30)->get();
+        $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
 
-        return $contact->toJson();
+        $DB = new Contact;
+        $searchQuery = '%' . $request->q . '%';
+     
+                $comp = $DB->select('*')
+                ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->with('GetSuppliersID')->get();
+
+        return $comp->toJson();
+    }
+
+     public function API(Supplier $supplier)
+    {
+        $supplier = Supplier::where('code', 'like', '%'.request()->code.'%')
+        ->orWhere('title', 'like', '%'.request()->code.'%')->limit(10)->get();
+        return response()->json($supplier);
     }
 }
 

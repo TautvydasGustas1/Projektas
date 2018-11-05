@@ -11,16 +11,16 @@ class Contact extends Model
     	'first_name',
     	'last_name',
     	'email',
+        'supplier_id',
     	'address',
     	'phone',
     	'comments',
         'modified_UserID'
 
     ];
-
-    public function GiveContactID() {
-  
-    	return $this->hasMany(Supplier::class); 
-    }
     
+    public function GetSuppliersID() {
+
+        return $this->belongsTo(Supplier::class, 'supplier_id'); 
+    }
 }

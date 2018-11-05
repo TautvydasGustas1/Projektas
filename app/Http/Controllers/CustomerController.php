@@ -66,10 +66,21 @@ class CustomerController extends Controller
        public function getReactSearch(Request $request)
     {
 
-        $customer = Customer::where('last_name', 'like', '%'.request()->q.'%')
+        $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
+
+        $DB = new Customer;
+        $searchQuery = '%' . $request->q . '%';
+     
+                $comp = $DB->select('*')
+                ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->get();
+
+        return $comp->toJson();
+
+        /*$customer = Customer::where('last_name', 'like', '%'.request()->q.'%')
         ->orWhere('first_name', 'like', '%'.request()->q . '%')->limit(30)->get();
 
-        return $customer->toJson();
+        return $customer->toJson();*/
     }
 
 }

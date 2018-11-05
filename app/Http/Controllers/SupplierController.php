@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Supplier;
-use App\Contact;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -17,9 +16,7 @@ class SupplierController extends Controller
    	public function index(Request $request) {
 
    		$supplier = Supplier::limit(25)->skip($request->page)->get();
-
-      
-       
+   
         return $supplier->toJson();
    	}
 
@@ -78,15 +75,21 @@ class SupplierController extends Controller
       public function getReactSearch(Request $request)
     {
 
-        $suppliers = Supplier::where('title', 'like', '%'.request()->q.'%')
-        ->orWhere('code', 'like', '%'.request()->q . '%')->limit(30)->get();
+      $fields = explode(',', $request->fields);
+        $temp = implode(",'|',", $fields);
 
-        return $suppliers->toJson();
+        $DB = new Supplier;
+        $searchQuery = '%' . $request->q . '%';
+     
+                $comp = $DB->select('*')
+                ->whereRaw("CONCAT(".$temp.") like '$searchQuery'")->get();
+
+        return $comp->toJson();
+
+        /*$suppliers = Supplier::where('title', 'like', '%'.request()->q.'%')
+        ->orWhere('code', 'like', '%'.request()->q . '%')->limit(30)->get();*/
+
+       // return $comp->toJson();
     }
 
-    public function API(Contact $contact)
-    {
-        $contact = Contact::where('title', 'like', '%'.request()->title.'%')->limit(10)->get();
-        return response()->json($contact);
-    }
 }

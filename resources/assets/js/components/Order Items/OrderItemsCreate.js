@@ -25,6 +25,7 @@ class OrderItemsCreate extends Component {
 			autocompleteData: [],
 			autocompleteData1: [],
 			errors: [],
+			edit: false
 
 		}
 
@@ -52,11 +53,11 @@ retrieveDataAsynchronously(searchText){
        const orderItemId = this.props.match.params.id
 
         axios.get(`/orders/${orderItemId}/api?sku=`+searchText).then(response => {
- 
          this.setState({
-
-           autocompleteData: response.data
+           autocompleteData: response.data,
+           
          });
+       
         
 
      }).catch(errors => {
@@ -79,6 +80,7 @@ retrieveDataAsynchronously(searchText){
         this.setState({
             sku: val
         });
+        
     }
 
    
@@ -92,8 +94,12 @@ retrieveDataAsynchronously(searchText){
 
     
     getItemValue(item){
+
+        this.state.product_title = item.title
         
         return `${item.sku}`;
+
+        
     }
 
 
@@ -139,7 +145,7 @@ retrieveDataAsynchronouslyCust(searchText){
     renderItemCust(item, isHighlighted){
         return (
             <div key={item.id} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item.last_name}
+                {item.first_name} {item.last_name} 
             </div>   
         ); 
     }
@@ -155,6 +161,7 @@ retrieveDataAsynchronouslyCust(searchText){
 				//Form
 
 
+
 //Pasiema data is servo
 //---------- 
 componentDidMount () {
@@ -166,6 +173,31 @@ componentDidMount () {
        order_id: response.data.id
       })
     })
+
+    if(this.props.match.params.id2 !== undefined)
+    {
+	    const orderId = this.props.match.params.id
+	    const orderItemsId = this.props.match.params.id2
+
+	    axios.get(`/order/${orderId}/items/${orderItemsId}/edit`).then(response => {
+	      this.setState({
+	       name: response.data.order_no,
+	       order_id: response.data.order_id,
+	       sku: response.data.sku,
+	       customer_title: response.data.customer_title,
+	       contact_info: response.data.contact_info,
+	       product_title: response.data.product_title,
+	       price: response.data.price,
+	       qty: response.data.qty,
+	       deadline: response.data.deadline,
+	       leadtime: response.data.leadtime,
+	       item_status: response.data.item_status,
+	       notified: response.data.notified,
+	       customer_status: response.data.customer_status
+	      })
+	    })
+	    this.state.edit = true
+    }
   }
 //--------------
 
@@ -196,6 +228,7 @@ componentDidMount () {
 		event.preventDefault()
 		const { history } = this.props
 		const orderItemId = this.props.match.params.id
+		const orderItemsId = this.props.match.params.id2
 
 		
 
@@ -214,7 +247,7 @@ componentDidMount () {
 			customer_status: this.state.customer_status
 		}
 
-		axios.post(`/order/${orderItemId}/items`, orderItems).then(response => {
+		axios.post(this.state.edit === true ? `/order/${orderItemId}/items/${orderItemsId}` : `/order/${orderItemId}/items`, orderItems).then(response => {
 			//redirecting
 			history.push({
 			  pathname: `/oorder/${orderItemId}/items`,
@@ -237,19 +270,10 @@ render() {
    			 <div className="row justify-content-center">
         		<div className="col-md-8">
            			 <div className="card">
-		                <div className="card-header" align="center"><h1>Create Order Item for {this.state.name}</h1></div>
+		                <div className="card-header" align="center"><h1>{this.state.edit === true ? 'Edit' : 'Create'} Order Item for {this.state.name}</h1></div>
 		                <div className="card-body">
 		                <form onSubmit={this.handleSubmit}>
 		               {/* @csrf*/}
-
-		                <div className="row">
-				          <div className="col-md-4"></div>
-				         	 <div className="form-group col-md-5">				         	 	
-				             <label>Order Number</label>
-				            <input id="order_id" type="order_id" name="order_id" className={`form-control ${this.hasErrorFor('order_id') ? 'is-invalid' : ''}`} value={this.state.order_id} onChange={this.handleFieldChange}/>
-				            {this.renderErrorFor('order_id')}				  
-				          </div>
-				        </div>
 
 					<div className="row">
 							<div className="col-md-4"></div>
@@ -257,19 +281,19 @@ render() {
 						  			 <label>Sku</label>
 
 						  			 <div>
-                <Autocomplete  
-                    getItemValue={this.getItemValue}
-                    items={this.state.autocompleteData}
-                    renderItem={this.renderItem}
-                    value={this.state.sku}
-                    onChange={this.onChange}
-                    onSelect={this.onSelect}
-			        menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
-                    inputProps={{name: "sku", className: "form-control"}}
-                    wrapperStyle={{}}
-                    
-             	  />
-            	</div>
+					                <Autocomplete  
+					                    getItemValue={this.getItemValue}
+					                    items={this.state.autocompleteData}
+					                    renderItem={this.renderItem}
+					                    value={this.state.sku || ''}
+					                    onChange={this.onChange}
+					                    onSelect={this.onSelect}
+								        menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
+					                    inputProps={{name: "sku", className: "form-control"}}
+					                    wrapperStyle={{}}
+					                    
+					             	  />
+					            	</div>
 								</div> 
 				 			</div>
 
@@ -278,7 +302,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Product Title</label>
-				            <input id="product_title" type="product_title" name="product_title" className={`form-control ${this.hasErrorFor('product_title') ? 'is-invalid' : ''}`} value={this.state.product_title} onChange={this.handleFieldChange}/>
+				            <input id="product_title" type="product_title" name="product_title" className={`form-control ${this.hasErrorFor('product_title') ? 'is-invalid' : ''}`} value={this.state.product_title || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('product_title')}				  
 				          </div>
 				        </div>
@@ -288,20 +312,20 @@ render() {
 							<div className="col-md-4"></div>
 				        		<div className="form-group col-md-5">
 						  			 <label>Customer Title</label>
-						  <div>						  			 
-                <Autocomplete  
-                    getItemValue={this.getItemValueCust}
-                    items={this.state.autocompleteData1}
-                    renderItem={this.renderItemCust}
-                    value={this.state.customer_title}
-                    onChange={this.onChangeCust}
-                    onSelect={this.onSelectCust}
-                    menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
-                    wrapperStyle={{}}
-                    inputProps={{name: "customer_title", className: `form-control ${this.hasErrorFor('customer_title') ? 'is-invalid' : ''}`}}
-             	  />
-             	  {this.renderErrorFor('customer_title')}	
-            			</div>
+										  <div>						  			 
+				                <Autocomplete  
+				                    getItemValue={this.getItemValueCust}
+				                    items={this.state.autocompleteData1}
+				                    renderItem={this.renderItemCust}
+				                    value={this.state.customer_title || ''}
+				                    onChange={this.onChangeCust}
+				                    onSelect={this.onSelectCust}
+				                    menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
+				                    wrapperStyle={{}}
+				                    inputProps={{name: "customer_title", className: `form-control ${this.hasErrorFor('customer_title') ? 'is-invalid' : ''}`}}
+				             	  />
+				             	  {this.renderErrorFor('customer_title')}	
+				            			</div>
 								</div> 
 				 			</div>
 
@@ -310,7 +334,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Contact Info</label>
-				            <input id="contact_info" type="contact_info" name="contact_info" className={`form-control ${this.hasErrorFor('contact_info') ? 'is-invalid' : ''}`} value={this.state.contact_info} onChange={this.handleFieldChange}/>
+				            <textarea id="contact_info" type="contact_info" name="contact_info" className={`form-control ${this.hasErrorFor('contact_info') ? 'is-invalid' : ''}`} value={this.state.contact_info || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('contact_info')}				  
 				          </div>
 				        </div>
@@ -320,7 +344,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Price</label>
-				            <input id="price" type="price" name="price" className={`form-control ${this.hasErrorFor('price') ? 'is-invalid' : ''}`} value={this.state.price} onChange={this.handleFieldChange}/>
+				            <input id="price" type="price" name="price" className={`form-control ${this.hasErrorFor('price') ? 'is-invalid' : ''}`} value={this.state.price || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('price')}				  
 				          </div>
 				        </div>
@@ -329,7 +353,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Quantity</label>
-				            <input id="qty" type="qty" name="qty" className={`form-control ${this.hasErrorFor('qty') ? 'is-invalid' : ''}`} value={this.state.qty} onChange={this.handleFieldChange}/>
+				            <input id="qty" type="qty" name="qty" className={`form-control ${this.hasErrorFor('qty') ? 'is-invalid' : ''}`} value={this.state.qty || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('qty')}				  
 				          </div>
 				        </div>
@@ -338,7 +362,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Deadline</label>
-				            <input id="deadline" type="date" name="deadline" className={`form-control ${this.hasErrorFor('deadline') ? 'is-invalid' : ''}`} value={this.state.deadline} onChange={this.handleFieldChange}/>
+				            <input id="deadline" type="date" name="deadline" className={`form-control ${this.hasErrorFor('deadline') ? 'is-invalid' : ''}`} value={this.state.deadline || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('deadline')}				  
 				          </div>
 				        </div>
@@ -347,7 +371,7 @@ render() {
 				          <div className="col-md-4"></div>
 				         	 <div className="form-group col-md-5">				         	 	
 				             <label>Leadtime</label>
-				            <input id="leadtime" type="date" name="leadtime" className={`form-control ${this.hasErrorFor('leadtime') ? 'is-invalid' : ''}`} value={this.state.leadtime} onChange={this.handleFieldChange}/>
+				            <input id="leadtime" type="date" name="leadtime" className={`form-control ${this.hasErrorFor('leadtime') ? 'is-invalid' : ''}`} value={this.state.leadtime || ''} onChange={this.handleFieldChange}/>
 				            {this.renderErrorFor('leadtime')}				  
 				          </div>
 				        </div>
@@ -356,7 +380,7 @@ render() {
 						<div className="col-md-4"></div>
 				        <div className="form-group col-md-5">
 						  <label>Item Status</label>
-						  <select className="form-control" name="item_status" value={this.state.item_status} onChange={this.handleFieldChange}>
+						  <select className="form-control" name="item_status" value={this.state.item_status || ''} onChange={this.handleFieldChange}>
 						  	<option value="null"> </option>
 						    <option value="0">0 - Not requested</option>
 						    <option value="1">1 - Requested</option>
@@ -372,7 +396,7 @@ render() {
 						<div className="col-md-4"></div>
 				        <div className="form-group col-md-5">
 						  <label>Notified</label>
-						  <select className="form-control" name="notified" value={this.state.notified} onChange={this.handleFieldChange}>
+						  <select className="form-control" name="notified" value={this.state.notified || ''} onChange={this.handleFieldChange}>
 						  	<option value="null"> </option>
 						    <option value="0">0 - Customer not notified about status</option>
 						    <option value="1">1 - Customer notified about status</option>
@@ -386,13 +410,15 @@ render() {
 						<div className="col-md-4"></div>
 				        <div className="form-group col-md-5">
 						  <label>Customer Status</label>
-						  <select className="form-control" name="customer_status" value={this.state.customer_status} onChange={this.handleFieldChange}>
+						  <select className="form-control" name="customer_status" value={this.state.customer_status || ''} onChange={this.handleFieldChange}>
 						  	<option value="null"> </option>
 						    <option value="0">0 - Request</option>
 						    <option value="1">1 - Price offer</option>
 						    <option value="2">2 - Negotiation</option>
 						    <option value="3">3 - Closed refused</option>
 						    <option value="4">4 - Closed confirmed</option>
+						    <option value="5">5 - Confirmed</option>
+
 						  </select>
 						</div>
 					</div>
