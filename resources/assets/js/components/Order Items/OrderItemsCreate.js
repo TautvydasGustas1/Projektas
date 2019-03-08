@@ -129,7 +129,6 @@ retrieveDataAsynchronouslyCust(searchText){
         });
             
         this.retrieveDataAsynchronouslyCust(e.target.value)
-        
     }
 
   
@@ -153,7 +152,7 @@ retrieveDataAsynchronouslyCust(searchText){
     
     getItemValueCust(item){
        
-        return `${item.last_name}`;
+        return `${item.first_name + " " +  item.last_name}`;
     }
 
    			 //Autocomplete
@@ -422,8 +421,6 @@ render() {
 						  </select>
 						</div>
 					</div>
-
-				 						
 			         				 <div className="form-group col-md-5">
 			           				 <button type="submit" className="btn btn-success">Submit</button>
 			          				 </div>

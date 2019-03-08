@@ -22,7 +22,6 @@ class Order_Items extends Model
     	'notified',
     	'customer_status',
         'modified_UserID'
-
     ];
 
     public function order() {

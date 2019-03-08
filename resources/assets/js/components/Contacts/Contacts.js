@@ -233,8 +233,10 @@ render() {
 			                    onSelect={this.onSelect}
 			                     menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
 			                    inputProps={{name: "supplier_id", className: "form-control"}}
+
 			                    wrapperStyle={{}}
-			             	  />				  
+			             	  />	
+			             	  {this.renderErrorFor('special_price')}				  
 				          </div>
 				        </div>
 
