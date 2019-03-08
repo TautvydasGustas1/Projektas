@@ -47,6 +47,8 @@ class Products extends Component {
 		}
   }
 
+ 
+
 	hasErrorFor (field) {
     return !!this.state.errors[field]
   }

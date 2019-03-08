@@ -29,6 +29,7 @@ class Orders extends Component {
         this.getItemValue = this.getItemValue.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
+        this.onMenuVisibilityChange = this.onMenuVisibilityChange.bind(this);
 
 
 		
@@ -51,6 +52,11 @@ retrieveDataAsynchronously(searchText){
      })
 
     }
+
+    onMenuVisibilityChange(isOpen)
+  {
+    this.retrieveDataAsynchronously("");
+  }
     
 
     onChange(e){
@@ -213,6 +219,7 @@ render() {
                      menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
                     inputProps={{name: "supplier", className: "form-control"}}
                     wrapperStyle={{}}
+                    onMenuVisibilityChange={this.onMenuVisibilityChange}
              	  />
             	
 								</div> 

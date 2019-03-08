@@ -24,8 +24,6 @@ class Suppliers extends Component {
 		this.handleFieldChange = this.handleFieldChange.bind(this)
 		this.hasErrorFor = this.hasErrorFor.bind(this)
     	this.renderErrorFor = this.renderErrorFor.bind(this)
-
-    	
 		
 }
 

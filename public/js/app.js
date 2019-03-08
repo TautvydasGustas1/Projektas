@@ -60623,6 +60623,7 @@ var Orders = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 
 		return _this;
 	}
@@ -60642,6 +60643,11 @@ var Orders = function (_Component) {
 
 				console.log(errors);
 			});
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'onChange',
@@ -60860,7 +60866,8 @@ var Orders = function (_Component) {
 												onSelect: this.onSelect,
 												menuStyle: { zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
 												inputProps: { name: "supplier", className: "form-control" },
-												wrapperStyle: {}
+												wrapperStyle: {},
+												onMenuVisibilityChange: this.onMenuVisibilityChange
 											})
 										)
 									),
@@ -61524,6 +61531,7 @@ var OrdersList = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 		return _this;
 	}
 
@@ -61542,6 +61550,11 @@ var OrdersList = function (_Component) {
 			});
 			window.addEventListener("scroll", this.handleScroll);
 			this.state.message = this.props.location.state;
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'handleScroll',
@@ -61818,7 +61831,8 @@ var OrdersList = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -62025,6 +62039,7 @@ var SuppliersList = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 		return _this;
 	}
 
@@ -62084,6 +62099,11 @@ var SuppliersList = function (_Component) {
 			this.setState({
 				query: event.target.value
 			});
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'GetSearchResults',
@@ -62330,7 +62350,8 @@ var SuppliersList = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -62824,6 +62845,8 @@ var ProductsList = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
+
 		return _this;
 	}
 
@@ -62845,6 +62868,11 @@ var ProductsList = function (_Component) {
 
 				console.log(errors);
 			});
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'onChange',
@@ -63124,7 +63152,8 @@ var ProductsList = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -63285,241 +63314,241 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 var Products = function (_Component) {
-		_inherits(Products, _Component);
+	_inherits(Products, _Component);
 
-		function Products(props) {
-				_classCallCheck(this, Products);
+	function Products(props) {
+		_classCallCheck(this, Products);
 
-				var _this = _possibleConstructorReturn(this, (Products.__proto__ || Object.getPrototypeOf(Products)).call(this, props));
+		var _this = _possibleConstructorReturn(this, (Products.__proto__ || Object.getPrototypeOf(Products)).call(this, props));
 
-				_this.state = {
-						sku: '',
-						title: '',
-						cost: '0',
-						price: '0',
-						special_price: '0',
-						errors: [],
-						edit: false
+		_this.state = {
+			sku: '',
+			title: '',
+			cost: '0',
+			price: '0',
+			special_price: '0',
+			errors: [],
+			edit: false
 
-				};
+		};
 
-				_this.handleSubmit = _this.handleSubmit.bind(_this);
-				_this.handleFieldChange = _this.handleFieldChange.bind(_this);
-				_this.hasErrorFor = _this.hasErrorFor.bind(_this);
-				_this.renderErrorFor = _this.renderErrorFor.bind(_this);
+		_this.handleSubmit = _this.handleSubmit.bind(_this);
+		_this.handleFieldChange = _this.handleFieldChange.bind(_this);
+		_this.hasErrorFor = _this.hasErrorFor.bind(_this);
+		_this.renderErrorFor = _this.renderErrorFor.bind(_this);
 
-				return _this;
+		return _this;
+	}
+
+	//----------------------------------------------
+	//Form
+
+	_createClass(Products, [{
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var _this2 = this;
+
+			if (this.props.match.params.id !== undefined) {
+				var productId = this.props.match.params.id;
+
+				__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/products/' + productId + '/edit').then(function (response) {
+					_this2.setState({
+						sku: response.data.sku,
+						title: response.data.title,
+						cost: response.data.cost,
+						price: response.data.price,
+						special_price: response.data.special_price
+					});
+				});
+				this.state.edit = true;
+			}
 		}
+	}, {
+		key: 'hasErrorFor',
+		value: function hasErrorFor(field) {
+			return !!this.state.errors[field];
+		}
+	}, {
+		key: 'renderErrorFor',
+		value: function renderErrorFor(field) {
+			if (this.hasErrorFor(field)) {
+				return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					'span',
+					{ className: 'invalid-feedback' },
+					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						'strong',
+						null,
+						this.state.errors[field][0]
+					)
+				);
+			}
+		}
+	}, {
+		key: 'handleFieldChange',
+		value: function handleFieldChange(event) {
+			this.setState(_defineProperty({}, event.target.name, event.target.value));
+		}
+	}, {
+		key: 'handleSubmit',
+		value: function handleSubmit(event) {
+			var _this3 = this;
 
-		//----------------------------------------------
-		//Form
+			event.preventDefault();
+			var history = this.props.history;
 
-		_createClass(Products, [{
-				key: 'componentDidMount',
-				value: function componentDidMount() {
-						var _this2 = this;
+			var productId = this.props.match.params.id;
 
-						if (this.props.match.params.id !== undefined) {
-								var productId = this.props.match.params.id;
+			var product = {
+				sku: this.state.sku,
+				title: this.state.title,
+				cost: this.state.cost,
+				price: this.state.price,
+				special_price: this.state.special_price
+			};
 
-								__WEBPACK_IMPORTED_MODULE_2_axios___default.a.get('/products/' + productId + '/edit').then(function (response) {
-										_this2.setState({
-												sku: response.data.sku,
-												title: response.data.title,
-												cost: response.data.cost,
-												price: response.data.price,
-												special_price: response.data.special_price
-										});
-								});
-								this.state.edit = true;
-						}
-				}
-		}, {
-				key: 'hasErrorFor',
-				value: function hasErrorFor(field) {
-						return !!this.state.errors[field];
-				}
-		}, {
-				key: 'renderErrorFor',
-				value: function renderErrorFor(field) {
-						if (this.hasErrorFor(field)) {
-								return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-										'span',
-										{ className: 'invalid-feedback' },
-										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'strong',
-												null,
-												this.state.errors[field][0]
-										)
-								);
-						}
-				}
-		}, {
-				key: 'handleFieldChange',
-				value: function handleFieldChange(event) {
-						this.setState(_defineProperty({}, event.target.name, event.target.value));
-				}
-		}, {
-				key: 'handleSubmit',
-				value: function handleSubmit(event) {
-						var _this3 = this;
+			__WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(this.state.edit === true ? '/products/' + productId : '/products', product).then(function (response) {
+				//redirecting
+				history.push({
+					pathname: '/pproducts/list',
+					state: { some: response.data }
+				});
+			}).catch(function (error) {
+				_this3.setState({
+					errors: error.response.data.errors
+				});
+			});
+		}
+	}, {
+		key: 'render',
+		value: function render() {
 
-						event.preventDefault();
-						var history = this.props.history;
-
-						var productId = this.props.match.params.id;
-
-						var product = {
-								sku: this.state.sku,
-								title: this.state.title,
-								cost: this.state.cost,
-								price: this.state.price,
-								special_price: this.state.special_price
-						};
-
-						__WEBPACK_IMPORTED_MODULE_2_axios___default.a.post(this.state.edit === true ? '/products/' + productId : '/products', product).then(function (response) {
-								//redirecting
-								history.push({
-										pathname: '/pproducts/list',
-										state: { some: response.data }
-								});
-						}).catch(function (error) {
-								_this3.setState({
-										errors: error.response.data.errors
-								});
-						});
-				}
-		}, {
-				key: 'render',
-				value: function render() {
-
-						return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				{ className: 'container' },
+				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					'div',
+					{ className: 'row justify-content-center' },
+					__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+						'div',
+						{ className: 'col-md-8' },
+						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+							'div',
+							{ className: 'card' },
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 								'div',
-								{ className: 'container' },
+								{ className: 'card-header', align: 'center' },
 								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-										'div',
-										{ className: 'row justify-content-center' },
-										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-												'div',
-												{ className: 'col-md-8' },
-												__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-														'div',
-														{ className: 'card' },
-														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																'div',
-																{ className: 'card-header', align: 'center' },
-																__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																		'h1',
-																		null,
-																		this.state.edit === true ? 'Edit' : 'Create',
-																		' Product'
-																)
-														),
-														__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																'div',
-																{ className: 'card-body' },
-																__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																		'form',
-																		{ onSubmit: this.handleSubmit },
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'row' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'div',
-																						{ className: 'form-group col-md-5' },
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																								'label',
-																								null,
-																								'Sku'
-																						),
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'sku', type: 'sku', name: 'sku', className: 'form-control ' + (this.hasErrorFor('sku') ? 'is-invalid' : ''), value: this.state.sku || '', onChange: this.handleFieldChange }),
-																						this.renderErrorFor('sku')
-																				)
-																		),
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'row' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'div',
-																						{ className: 'form-group col-md-5' },
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																								'label',
-																								null,
-																								'Title'
-																						),
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'title', type: 'title', name: 'title', className: 'form-control ' + (this.hasErrorFor('title') ? 'is-invalid' : ''), value: this.state.title || '', onChange: this.handleFieldChange }),
-																						this.renderErrorFor('title')
-																				)
-																		),
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'row' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'div',
-																						{ className: 'form-group col-md-5' },
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																								'label',
-																								null,
-																								'Cost'
-																						),
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'cost', type: 'cost', name: 'cost', className: 'form-control ' + (this.hasErrorFor('cost') ? 'is-invalid' : ''), value: this.state.cost || '', onChange: this.handleFieldChange }),
-																						this.renderErrorFor('cost')
-																				)
-																		),
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'row' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'div',
-																						{ className: 'form-group col-md-5' },
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																								'label',
-																								null,
-																								'Price'
-																						),
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'price', type: 'price', name: 'price', className: 'form-control ' + (this.hasErrorFor('price') ? 'is-invalid' : ''), value: this.state.price || '', onChange: this.handleFieldChange }),
-																						this.renderErrorFor('price')
-																				)
-																		),
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'row' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'div',
-																						{ className: 'form-group col-md-5' },
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																								'label',
-																								null,
-																								'Special Price'
-																						),
-																						__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'special_price', type: 'special_price', name: 'special_price', className: 'form-control ' + (this.hasErrorFor('special_price') ? 'is-invalid' : ''), value: this.state.special_price || '', onChange: this.handleFieldChange }),
-																						this.renderErrorFor('special_price')
-																				)
-																		),
-																		__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																				'div',
-																				{ className: 'form-group col-md-5' },
-																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-																						'button',
-																						{ type: 'submit', className: 'btn btn-success' },
-																						'Submit'
-																				)
-																		)
-																)
-														)
-												)
-										)
+									'h1',
+									null,
+									this.state.edit === true ? 'Edit' : 'Create',
+									' Product'
 								)
-						);
-				}
-		}]);
+							),
+							__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+								'div',
+								{ className: 'card-body' },
+								__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+									'form',
+									{ onSubmit: this.handleSubmit },
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'row' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'form-group col-md-5' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'label',
+												null,
+												'Sku'
+											),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'sku', type: 'sku', name: 'sku', className: 'form-control ' + (this.hasErrorFor('sku') ? 'is-invalid' : ''), value: this.state.sku || '', onChange: this.handleFieldChange }),
+											this.renderErrorFor('sku')
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'row' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'form-group col-md-5' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'label',
+												null,
+												'Title'
+											),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'title', type: 'title', name: 'title', className: 'form-control ' + (this.hasErrorFor('title') ? 'is-invalid' : ''), value: this.state.title || '', onChange: this.handleFieldChange }),
+											this.renderErrorFor('title')
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'row' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'form-group col-md-5' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'label',
+												null,
+												'Cost'
+											),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'cost', type: 'cost', name: 'cost', className: 'form-control ' + (this.hasErrorFor('cost') ? 'is-invalid' : ''), value: this.state.cost || '', onChange: this.handleFieldChange }),
+											this.renderErrorFor('cost')
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'row' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'form-group col-md-5' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'label',
+												null,
+												'Price'
+											),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'price', type: 'price', name: 'price', className: 'form-control ' + (this.hasErrorFor('price') ? 'is-invalid' : ''), value: this.state.price || '', onChange: this.handleFieldChange }),
+											this.renderErrorFor('price')
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'row' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'col-md-4' }),
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'div',
+											{ className: 'form-group col-md-5' },
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+												'label',
+												null,
+												'Special Price'
+											),
+											__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: 'special_price', type: 'special_price', name: 'special_price', className: 'form-control ' + (this.hasErrorFor('special_price') ? 'is-invalid' : ''), value: this.state.special_price || '', onChange: this.handleFieldChange }),
+											this.renderErrorFor('special_price')
+										)
+									),
+									__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+										'div',
+										{ className: 'form-group col-md-5' },
+										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+											'button',
+											{ type: 'submit', className: 'btn btn-success' },
+											'Submit'
+										)
+									)
+								)
+							)
+						)
+					)
+				)
+			);
+		}
+	}]);
 
-		return Products;
+	return Products;
 }(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
 
 ;
@@ -63584,6 +63613,7 @@ var ProductsPrice = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 		return _this;
 	}
 
@@ -63602,6 +63632,11 @@ var ProductsPrice = function (_Component) {
 			});
 			window.addEventListener("scroll", this.handleScroll);
 			this.state.message = this.props.location.state;
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'handleScroll',
@@ -63897,7 +63932,8 @@ var ProductsPrice = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -64358,6 +64394,7 @@ var OrderItemsList = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 		return _this;
 	}
 
@@ -64379,6 +64416,11 @@ var OrderItemsList = function (_Component) {
 			});
 			window.addEventListener("scroll", this.handleScroll);
 			this.state.message = this.props.location.state;
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'handleScroll',
@@ -64774,7 +64816,8 @@ var OrderItemsList = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -65079,6 +65122,7 @@ var OrderItemsCreate = function (_Component) {
 								_this.onSelectCust = _this.onSelectCust.bind(_this);
 								_this.getItemValueCust = _this.getItemValueCust.bind(_this);
 								_this.renderItemCust = _this.renderItemCust.bind(_this);
+								_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 
 								return _this;
 				}
@@ -65116,6 +65160,11 @@ var OrderItemsCreate = function (_Component) {
 												this.setState({
 																sku: val
 												});
+								}
+				}, {
+								key: 'onMenuVisibilityChange',
+								value: function onMenuVisibilityChange(isOpen) {
+												this.retrieveDataAsynchronously("");
 								}
 				}, {
 								key: 'renderItem',
@@ -65359,7 +65408,8 @@ var OrderItemsCreate = function (_Component) {
 																																																				onSelect: this.onSelect,
 																																																				menuStyle: { zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
 																																																				inputProps: { name: "sku", className: "form-control" },
-																																																				wrapperStyle: {}
+																																																				wrapperStyle: {},
+																																																				onMenuVisibilityChange: this.onMenuVisibilityChange
 
 																																																})
 																																												)
@@ -65405,7 +65455,8 @@ var OrderItemsCreate = function (_Component) {
 																																																				onSelect: this.onSelectCust,
 																																																				menuStyle: { zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
 																																																				wrapperStyle: {},
-																																																				inputProps: { name: "customer_title", className: 'form-control ' + (this.hasErrorFor('customer_title') ? 'is-invalid' : '') }
+																																																				inputProps: { name: "customer_title", className: 'form-control ' + (this.hasErrorFor('customer_title') ? 'is-invalid' : '') },
+																																																				onMenuVisibilityChange: this.onMenuVisibilityChange
 																																																}),
 																																																this.renderErrorFor('customer_title')
 																																												)
@@ -65880,6 +65931,8 @@ var Contacts = function (_Component) {
 		_this.getItemValue = _this.getItemValue.bind(_this);
 		_this.renderItem = _this.renderItem.bind(_this);
 		_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+		_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
+
 		return _this;
 	}
 
@@ -65899,6 +65952,11 @@ var Contacts = function (_Component) {
 			});
 			window.addEventListener("scroll", this.handleScroll);
 			this.state.message = this.props.location.state;
+		}
+	}, {
+		key: 'onMenuVisibilityChange',
+		value: function onMenuVisibilityChange(isOpen) {
+			this.retrieveDataAsynchronously("");
 		}
 	}, {
 		key: 'handleScroll',
@@ -66223,7 +66281,8 @@ var Contacts = function (_Component) {
 											onChange: this.onChange,
 											onSelect: this.onSelect,
 											menuStyle: { position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
-											inputProps: { className: "form-control", placeholder: "Search..." }
+											inputProps: { className: "form-control", placeholder: "Search..." },
+											onMenuVisibilityChange: this.onMenuVisibilityChange
 										}),
 										__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
 											'div',
@@ -66448,6 +66507,7 @@ var Contacts = function (_Component) {
 								_this.getItemValue = _this.getItemValue.bind(_this);
 								_this.renderItem = _this.renderItem.bind(_this);
 								_this.retrieveDataAsynchronously = _this.retrieveDataAsynchronously.bind(_this);
+								_this.onMenuVisibilityChange = _this.onMenuVisibilityChange.bind(_this);
 
 								return _this;
 				}
@@ -66467,6 +66527,11 @@ var Contacts = function (_Component) {
 
 																console.log(errors);
 												});
+								}
+				}, {
+								key: 'onMenuVisibilityChange',
+								value: function onMenuVisibilityChange(isOpen) {
+												this.retrieveDataAsynchronously("");
 								}
 				}, {
 								key: 'onChange',
@@ -66708,8 +66773,10 @@ var Contacts = function (_Component) {
 																																																onSelect: this.onSelect,
 																																																menuStyle: { zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0' },
 																																																inputProps: { name: "supplier_id", className: "form-control" },
-																																																wrapperStyle: {}
-																																												})
+																																																wrapperStyle: {},
+																																																onMenuVisibilityChange: this.onMenuVisibilityChange
+																																												}),
+																																												this.renderErrorFor('special_price')
 																																								)
 																																				),
 																																				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

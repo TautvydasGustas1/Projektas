@@ -29,6 +29,8 @@ constructor () {
         this.getItemValue = this.getItemValue.bind(this);
         this.renderItem = this.renderItem.bind(this);
         this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
+        this.onMenuVisibilityChange = this.onMenuVisibilityChange.bind(this);
+
   }
 
   //	Lazy Load
@@ -43,6 +45,12 @@ constructor () {
     })
     window.addEventListener("scroll", this.handleScroll);
     this.state.message = this.props.location.state;
+  }
+
+
+  onMenuVisibilityChange(isOpen)
+  {
+    this.retrieveDataAsynchronously("");
   }
 
   handleScroll() {
@@ -368,6 +376,7 @@ render() {
 			                    onSelect={this.onSelect}
 			                    menuStyle = {{position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
 			                    inputProps={{className: "form-control", placeholder: "Search..."}}
+			                    onMenuVisibilityChange={this.onMenuVisibilityChange}
 			             	  />
 			             	 	 <div className="input-group-append">
 							   	 <button className="btn btn-primary" onClick={this.GetSearchResults}><span className="oi oi-magnifying-glass"></span></button>

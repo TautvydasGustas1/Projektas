@@ -45,6 +45,7 @@ class OrderItemsCreate extends Component {
         this.onSelectCust = this.onSelectCust.bind(this);
         this.getItemValueCust = this.getItemValueCust.bind(this);
         this.renderItemCust = this.renderItemCust.bind(this);
+        this.onMenuVisibilityChange = this.onMenuVisibilityChange.bind(this);
         
 		
 }
@@ -57,8 +58,6 @@ retrieveDataAsynchronously(searchText){
            autocompleteData: response.data,
            
          });
-       
-        
 
      }).catch(errors => {
 
@@ -82,6 +81,11 @@ retrieveDataAsynchronously(searchText){
         });
         
     }
+
+    onMenuVisibilityChange(isOpen)
+  {
+    this.retrieveDataAsynchronously("");
+  }
 
    
     renderItem(item, isHighlighted){
@@ -290,6 +294,7 @@ render() {
 								        menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
 					                    inputProps={{name: "sku", className: "form-control"}}
 					                    wrapperStyle={{}}
+					                    onMenuVisibilityChange={this.onMenuVisibilityChange}
 					                    
 					             	  />
 					            	</div>
@@ -322,6 +327,7 @@ render() {
 				                    menuStyle = {{zIndex: 1, position: 'absolute', maxHeight: '300px', top: 'auto', left: 'auto', borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', overflowY: 'auto', fontSize: '90%', padding: '2px 0'}}
 				                    wrapperStyle={{}}
 				                    inputProps={{name: "customer_title", className: `form-control ${this.hasErrorFor('customer_title') ? 'is-invalid' : ''}`}}
+				                    onMenuVisibilityChange={this.onMenuVisibilityChange}
 				             	  />
 				             	  {this.renderErrorFor('customer_title')}	
 				            			</div>
