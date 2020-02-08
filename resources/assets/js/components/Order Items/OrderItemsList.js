@@ -33,10 +33,8 @@ constructor () {
         this.onMenuVisibilityChange = this.onMenuVisibilityChange.bind(this);
   }
 
-
   //	Lazy Load
   //------------------
-
   componentDidMount () {
   	const orderItemId = this.props.match.params.id
     axios.get(`/order/${orderItemId}/items`).then(response => {
@@ -65,12 +63,11 @@ constructor () {
         const windowBottom = windowHeight + window.pageYOffset + 10;
         
         if (windowBottom >= docHeight) {
-           
         	this.state.page += 25;
 	      	axios.get(`/order/${orderItemId}/items?page=`+this.state.page).then(response => {
-	      	
+	      	console.log(response)
 	     	 this.setState({
-	        orderItems: [...this.state.orderItems, ...response.data]
+	        orderItems: [...this.state.orderItems, ...response.data['order_item']]
 	      });
 	    }) 
 

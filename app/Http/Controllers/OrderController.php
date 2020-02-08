@@ -80,9 +80,6 @@ class OrderController extends Controller
 
             $order = Order::find($id);
             $order->delete();
-
-           
-
         return response()->json('Order deleted');
     }
 

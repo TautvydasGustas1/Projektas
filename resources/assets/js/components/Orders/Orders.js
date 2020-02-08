@@ -30,12 +30,9 @@ class Orders extends Component {
         this.renderItem = this.renderItem.bind(this);
         this.retrieveDataAsynchronously = this.retrieveDataAsynchronously.bind(this);
         this.onMenuVisibilityChange = this.onMenuVisibilityChange.bind(this);
-
-
-		
-}
-
-retrieveDataAsynchronously(searchText){
+	}
+	
+	retrieveDataAsynchronously(searchText){
        
 
         axios.get('/orders/api?title='+searchText, 0).then(response => {
@@ -134,7 +131,6 @@ retrieveDataAsynchronously(searchText){
 		this.setState({
 			[event.target.name]: event.target.value
 		})
-		
 	}
 
 	handleSubmit (event) {
@@ -147,7 +143,6 @@ retrieveDataAsynchronously(searchText){
 			order_no: this.state.order_no,
 			status: this.state.status,
 			supplier: this.state.supplier
-
 		}
 
 		axios.post(this.state.edit === true ? `/orders/${orderId}` : '/orders', order).then(response => {
@@ -163,11 +158,8 @@ retrieveDataAsynchronously(searchText){
 		})
 	}
 
-
 render() {
-	
 	return(
-
 		<div className="container">
    			 <div className="row justify-content-center">
         		<div className="col-md-8">

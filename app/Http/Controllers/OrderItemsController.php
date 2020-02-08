@@ -23,17 +23,13 @@ class OrderItemsController extends Controller
        $order_item = Order_Items::where('order_id', $order->id)->limit(25)->skip($request->page)->get();
        $order_no = Order::where('id', $order->id)->get();
 
-       
        $data['order_item'] = $order_item;
        $data['order_no'] = $order_no;
-
 
         return json_encode($data);
     }
     
     public function create(Customer $customers, Product $skus, Order $order) {
-
-        
 
         return $order->toJson();
     }
@@ -41,7 +37,6 @@ class OrderItemsController extends Controller
    public function save(Order $order) {
 
         $this->validate(request(), [
-
             'order_id' => 'numeric',
             'customer_id' => 'numeric',
             'price' => 'numeric',

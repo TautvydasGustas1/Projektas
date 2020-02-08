@@ -75,7 +75,7 @@ class SupplierController extends Controller
       public function getReactSearch(Request $request)
     {
 
-      $fields = explode(',', $request->fields);
+        $fields = explode(',', $request->fields);
         $temp = implode(",'|',", $fields);
 
         $DB = new Supplier;

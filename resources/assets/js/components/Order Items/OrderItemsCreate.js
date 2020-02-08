@@ -233,7 +233,6 @@ componentDidMount () {
 		const orderItemId = this.props.match.params.id
 		const orderItemsId = this.props.match.params.id2
 
-		
 
 		const orderItems = {
 			order_id: this.state.order_id,
@@ -295,7 +294,6 @@ render() {
 					                    inputProps={{name: "sku", className: "form-control"}}
 					                    wrapperStyle={{}}
 					                    onMenuVisibilityChange={this.onMenuVisibilityChange}
-					                    
 					             	  />
 					            	</div>
 								</div> 

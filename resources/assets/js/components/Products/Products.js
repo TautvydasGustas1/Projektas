@@ -86,10 +86,7 @@ class Products extends Component {
 
 		axios.post( this.state.edit === true ? `/products/${productId}` : '/products', product).then(response => {
 			//redirecting
-			history.push({
-			  pathname: '/pproducts/list',
-			  state: { some: response.data }
-			})
+			
 
 		}).catch(error => {
 			this.setState({
